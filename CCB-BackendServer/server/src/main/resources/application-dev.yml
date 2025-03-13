@@ -1,0 +1,15 @@
+ccb:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: 60.204.220.253
+    port: 3306
+    database: CCB
+    username: root
+    password: ecnuSE2022
+  jwt:
+    admin-secret-key: ecnuccb
+    admin-ttl: 7200000
+    admin-token-name: token
+    user-secret-key: ecnuccb
+    user-ttl: 7200000
+    user-token-name: authentication
