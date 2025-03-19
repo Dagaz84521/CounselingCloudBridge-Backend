@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    druid:
+      driver-class-name: ${ccb.datasource.driver-class-name}
+      url: jdbc:mysql://${ccb.datasource.host}:${ccb.datasource.port}/${ccb.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${ccb.datasource.username}
+      password: ${ccb.datasource.password}
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.ecnu.entity
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com:
+      sky:
+        mapper: debug
+        service: info
+        controller: info
+
+ccb:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: ${ccb.jwt.admin-secret-key}
+    # 设置jwt过期时间
+    admin-ttl: ${ccb.jwt.admin-ttl}
+    # 设置前端传递过来的令牌名称
+    admin-token-name: ${ccb.jwt.admin-token-name}
+    user-secret-key: ${ccb.jwt.user-secret-key}
+    user-ttl: ${ccb.jwt.user-ttl}
+    user-token-name: ${ccb.jwt.user-token-name}
