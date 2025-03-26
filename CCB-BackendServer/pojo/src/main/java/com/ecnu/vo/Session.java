@@ -13,7 +13,7 @@ public class Session {
 
     private Long sessionId;
 
-    private Long userId;
+    private Long clienId;
 
     private String realName;
 }

@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,10 +16,10 @@ public class CounselorHomeVO {
 
     private CounselorInfo counselorInfo;
 
-    private RecentSession[] recentSessions;
+    private List<LocalDate> schedule;
 
-    private Schedule schedule;
+    private List<RecentSession> recentSessions;
 
-    private Session[] sessionList;
+    private List<Session> sessionList;
 
 }
