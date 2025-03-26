@@ -1,18 +1,23 @@
 package com.ecnu.enumeration;
 
 /**
- * 数据库操作类型
+ * 公共字段填充类型
  */
 public enum OperationType {
 
     /**
-     * 更新操作
+     * 填充创建时间
+     */
+    CREATE,
+
+    /**
+     * 填充更新时间
      */
     UPDATE,
 
     /**
-     * 插入操作
+     * 填充创建时间和更新时间
      */
-    INSERT
+    BOTH
 
 }
