@@ -36,12 +36,12 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
         registry.addInterceptor(jwtTokenAdminInterceptor)
-                .addPathPatterns("/admin/**")
-                .excludePathPatterns("/admin/user/login");
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/user/**");
 
         registry.addInterceptor(jwtTokenUserInterceptor)
-                .addPathPatterns("/user/**")
-                .excludePathPatterns("/user/user/login");
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/user/**");
     }
 
     /**
@@ -56,33 +56,12 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .description("CCB接口文档")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
-                .groupName("管理端接口")
+                .groupName("CCB接口")
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ecnu.controller.admin"))
+                .apis(RequestHandlerSelectors.basePackage("com.ecnu.controller"))
                 .paths(PathSelectors.any())
                 .build();
-        return docket;
-    }
-
-    @Bean
-    public Docket docket2(){
-        log.info("准备生成接口文档...");
-        ApiInfo apiInfo = new ApiInfoBuilder()
-                .title("CCB接口文档")
-                .version("1.0")
-                .description("CCB接口文档")
-                .build();
-
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
-                .groupName("用户端接口")
-                .apiInfo(apiInfo)
-                .select()
-                //指定生成接口需要扫描的包
-                .apis(RequestHandlerSelectors.basePackage("com.ecnu.controller.user"))
-                .paths(PathSelectors.any())
-                .build();
-
         return docket;
     }
 

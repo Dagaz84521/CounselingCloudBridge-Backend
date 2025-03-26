@@ -1,6 +1,7 @@
 package com.ecnu.interceptor;
 
 import com.ecnu.constant.JwtClaimsConstant;
+import com.ecnu.context.BaseContext;
 import com.ecnu.properties.JwtProperties;
 import com.ecnu.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -45,8 +46,9 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
-            log.info("当前用户id：", empId);
+            Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+            log.info("当前用户id：", userId);
+            BaseContext.setCurrentId(userId);
             //3、通过，放行
             return true;
         } catch (Exception ex) {

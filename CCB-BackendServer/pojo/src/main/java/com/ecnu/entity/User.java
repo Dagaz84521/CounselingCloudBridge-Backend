@@ -28,6 +28,15 @@ public class User {
     //密码加密值
     private String passwordHash;
 
+    //年龄
+    private Integer age;
+
+    //性别
+    private String gender;
+
+    //职业
+    private String occupation;
+
     //用户类型：求助者、咨询师、管理员、督导
     private String userType;
 
