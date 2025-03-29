@@ -32,5 +32,4 @@ public class CounselorController {
         CounselorInfo counselorInfo = CounselorService.getCounselorInfo();
         return Result.success(counselorHomeVO);
     }
-
 }
