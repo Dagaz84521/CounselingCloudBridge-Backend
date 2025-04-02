@@ -1,7 +1,6 @@
 package com.ecnu.config;
 
 import com.ecnu.interceptor.JwtTokenAdminInterceptor;
-import com.ecnu.interceptor.JwtTokenUserInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +24,6 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     @Autowired
     private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
-    @Autowired
-    private JwtTokenUserInterceptor jwtTokenUserInterceptor;
 
     /**
      * 注册自定义拦截器
@@ -39,9 +36,6 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/user/**");
 
-        registry.addInterceptor(jwtTokenUserInterceptor)
-                .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/user/**");
     }
 
     /**

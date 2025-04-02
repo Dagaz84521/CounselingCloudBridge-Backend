@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +24,7 @@ public class SessionsServiceImpl implements SessionsService {
     @Autowired
     private CounselorService counselorService;
 
-    @Autowired
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
     /**
      * 验证会话访问权限（核心方法）

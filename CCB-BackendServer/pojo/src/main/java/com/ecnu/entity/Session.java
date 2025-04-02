@@ -34,6 +34,15 @@ public class Session {
     //结束时间
     private LocalDateTime endTime;
 
+    //评分
+    private Integer rating;
+
+    //咨询类型
+    private String type;
+
+    //咨询师建议
+    private String advice;
+
     //创建时间
     private LocalDateTime createdAt;
 

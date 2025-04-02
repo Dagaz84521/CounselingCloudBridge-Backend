@@ -33,6 +33,6 @@ public interface UserMapper {
      * @param currentId
      * @return
      */
-    @Select("select * from users where id = #{currentId}")
+    @Select("select * from users where user_id = #{currentId}")
     User geById(Long currentId);
 }
