@@ -3,6 +3,8 @@ package com.ecnu.service.impl;
 import com.ecnu.constant.CommonStatusConstant;
 import com.ecnu.constant.MessageConstant;
 import com.ecnu.constant.UserTypeConstant;
+import com.ecnu.dto.ResetPasswordDTO;
+import com.ecnu.dto.SmsDTO;
 import com.ecnu.dto.UserLoginDTO;
 import com.ecnu.dto.UserRegisterDTO;
 import com.ecnu.entity.User;
@@ -12,6 +14,8 @@ import com.ecnu.exception.AccountNotFoundException;
 import com.ecnu.exception.PasswordErrorException;
 import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.UserService;
+import com.ecnu.utils.SmsUtil;
+import com.ecnu.vo.UserInfoVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private SmsUtil smsUtil;
 
     /**
      * 用户登录
@@ -67,5 +73,41 @@ public class UserServiceImpl implements UserService {
         user.setStatus(CommonStatusConstant.ACTIVE);
 
         userMapper.register(user);
+    }
+
+    /**
+     * 重置密码
+     * @param resetPasswordDTO
+     */
+    public void resetPassword(ResetPasswordDTO resetPasswordDTO) {
+
+    }
+
+    /**
+     * 根据用户id获取用户信息
+     * @param currentId
+     * @return
+     */
+    public User getByUserId(Long currentId) {
+        User user = userMapper.geById(currentId);
+        return user;
+    }
+
+    /**
+     * 更新用户信息
+     * @param user
+     */
+    public void update(User user) {
+        userMapper.update(user);
+    }
+
+    /**
+     * 获取验证码
+     * @param phoneNumber
+     */
+    public void getCode(String phoneNumber) {
+        int code = (int)((Math.random() * 9 + 1) * 100000);
+        SmsDTO smsDTO = new SmsDTO(phoneNumber, String.valueOf(code));
+        smsUtil.sendSms(smsDTO);
     }
 }

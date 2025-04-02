@@ -3,9 +3,11 @@ package com.ecnu.mapper;
 import com.ecnu.annotation.AutoFill;
 import com.ecnu.entity.User;
 import com.ecnu.enumeration.OperationType;
+import com.ecnu.vo.UserInfoVO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserMapper {
@@ -35,4 +37,12 @@ public interface UserMapper {
      */
     @Select("select * from users where user_id = #{currentId}")
     User geById(Long currentId);
+
+    /**
+     * 更新用户信息
+     * @param user
+     */
+    @Update("update users set real_name = #{realName}, age = #{age}, gender = #{gender}, occupation = #{occupation}, avatar_url = #{avatarUrl} where user_id = #{userId}")
+    @AutoFill(OperationType.UPDATE)
+    void update(User user);
 }
