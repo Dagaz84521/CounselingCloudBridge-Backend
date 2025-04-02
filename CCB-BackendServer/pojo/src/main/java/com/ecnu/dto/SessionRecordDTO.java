@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginDTO {
+public class SessionRecordDTO {
+    private Long sessionId;
 
-    private String phoneNumber;
+    private Long senderId;
 
-    private String passwordHash;
+    private String content;
 }

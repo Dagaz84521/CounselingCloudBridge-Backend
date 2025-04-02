@@ -46,5 +46,4 @@ public class CounselorController {
                 .build();
         return Result.success(counselorHomeVO);
     }
-
 }

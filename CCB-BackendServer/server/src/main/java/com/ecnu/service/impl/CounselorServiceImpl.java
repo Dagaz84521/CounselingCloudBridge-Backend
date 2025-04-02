@@ -95,4 +95,19 @@ public class CounselorServiceImpl implements CounselorService {
         }
         return sessionList;
     }
+
+    @Override
+    public void incrementCurrentSessions(Long counselorId) {
+        counselorMapper.updateCurrentSessions(counselorId, 1);
+    }
+
+    @Override
+    public void decrementCurrentSessions(Long counselorId) {
+        counselorMapper.updateCurrentSessions(counselorId, 1);
+    }
+
+    @Override
+    public Counselor getById(Long counselorId) {
+        return counselorMapper.getById(counselorId);
+    }
 }

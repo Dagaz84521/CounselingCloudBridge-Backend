@@ -22,6 +22,15 @@ public class SessionRecord {
     //关联会话ID
     private Long sessionId;
 
+    //发送者ID
+    private Long senderId;
+
+    //接收者ID
+    private Long receiverId;
+
+    //消息状态
+    private String status;
+
     //会话内容（加密存储）
     private String content;
 

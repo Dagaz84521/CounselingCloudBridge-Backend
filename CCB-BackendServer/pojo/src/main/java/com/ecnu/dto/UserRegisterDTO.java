@@ -15,7 +15,7 @@ public class UserRegisterDTO {
 
     private String realName;
 
-    private String password;
+    private String passwordHash;
 
     private Integer age;
 

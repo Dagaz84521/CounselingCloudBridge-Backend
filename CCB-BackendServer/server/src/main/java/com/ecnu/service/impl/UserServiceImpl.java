@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
      */
     public User login(UserLoginDTO userLoginDTO) {
         String phoneNumber = userLoginDTO.getPhoneNumber();
-        String password = userLoginDTO.getPassword();
+        String passwordHash = userLoginDTO.getPasswordHash();
 
         //根据手机号查询用户
         User user = userMapper.getByPhoneNumber(phoneNumber);
@@ -38,8 +38,6 @@ public class UserServiceImpl implements UserService {
         if(user == null) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-        //对前端传递的明文密码进行加密，然后和数据库中的密文密码进行比对
-        String passwordHash = DigestUtils.md5DigestAsHex(password.getBytes());
         //密码错误
         if(!passwordHash.equals(user.getPasswordHash())) {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
@@ -66,7 +64,6 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRegisterDTO, user);
 
         user.setUserType(UserTypeConstant.CLIENT);
-        user.setPasswordHash(DigestUtils.md5DigestAsHex(userRegisterDTO.getPassword().getBytes()));
         user.setStatus(CommonStatusConstant.ACTIVE);
 
         userMapper.register(user);
