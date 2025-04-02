@@ -1,4 +1,4 @@
-package com.ecnu.dto;
+package com.ecnu.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,19 +11,15 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDTO implements Serializable {
+public class UserInfoVO implements Serializable {
 
-    private String phoneNumber;
+    private String avatarUrl;
 
     private String realName;
-
-    private String passwordHash;
 
     private Integer age;
 
     private String gender;
 
     private String occupation;
-
-    private String avatarUrl;
 }
