@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
-public interface CounselorScheduleMapper {
+public interface ScheduleMapper {
 
     /**
      * 获取咨询师的当月排班信息

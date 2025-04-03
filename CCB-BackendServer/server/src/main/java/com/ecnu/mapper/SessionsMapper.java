@@ -1,12 +1,15 @@
 package com.ecnu.mapper;
 
 
-import com.ecnu.dto.CounselorTodaySessionVO;
+import com.ecnu.dto.CounselorHistoryDTO;
+import com.ecnu.dto.CounselorTodaySessionDTO;
+import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.entity.Session;
+import com.ecnu.vo.RecentSession;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import com.ecnu.entity.Session;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -29,16 +32,16 @@ public interface SessionsMapper {
      * @param currentId
      * @return
      */
-    @Select("select count(*) as total_sessions, sum(timestampdiff(second, start_time, end_time)) as today_hours from sessions where counselor_id = #{currentId} and status = #{status} and date(start_time) = curdate() group by counselor_id ")
-    CounselorTodaySessionVO getCounselorTodaySession(Long currentId, String status);
+    @Select("select count(*) as todaySessions, sum(timestampdiff(second, start_time, end_time)) as todayHours from sessions where counselor_id = #{currentId} and status = #{status} and date(start_time) = curdate() group by counselor_id ")
+    CounselorTodaySessionDTO getCounselorTodaySession(Long currentId, String status);
 
     /**
      * 获取咨询师最近三次咨询
      * @param currentId
      * @return
      */
-    @Select("select * from sessions where counselor_id = #{currentId} and status = #{status} order by start_time desc limit 3")
-    List<Session> getRecentSessions(Long currentId, String status);
+    @Select("select s.session_id, s.client_id, s.start_time, s.rating, u.real_name, timestampdiff(second, s.start_time, s.end_time) from sessions s left outer join users u on s.client_id = u.user_id where s.counselor_id = #{currentId} and s.status = #{status} order by s.start_time desc limit 3")
+    List<RecentSession> getRecentSessions(Long currentId, String status);
 
     /**
      * 获取咨询师当前咨询信息
@@ -63,5 +66,18 @@ public interface SessionsMapper {
     @Options(useGeneratedKeys = true, keyProperty = "sessionId")
     int insertSession(Session session);
 
+    /**
+     * 获取咨询记录
+     * @param counselorHistoryDTO
+     * @return
+     */
+    Page<RecentSession> getHistory(CounselorHistoryDTO counselorHistoryDTO);
 
+    /**
+     * 添加咨询评价
+     * @param sessionAddAdviceDTO
+     * @param sessionid
+     */
+    @Update("UPDATE session SET advice = #{advice}, type = #{type} WHERE session_id = #{sessionid}")
+    void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid);
 }
