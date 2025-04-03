@@ -1,18 +1,15 @@
 package com.ecnu.controller;
 
+import com.ecnu.dto.CounselorHistoryDTO;
+import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.result.Result;
 import com.ecnu.service.CounselorService;
-import com.ecnu.vo.CounselorHomeVO;
-import com.ecnu.vo.CounselorInfo;
-import com.ecnu.vo.RecentSession;
-import com.ecnu.vo.Session;
+import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,5 +42,44 @@ public class CounselorController {
                 .sessionList(sessionList)
                 .build();
         return Result.success(counselorHomeVO);
+    }
+
+    /**
+     * 咨询历史记录
+     * @param counselorHistoryDTO
+     * @return
+     */
+    @GetMapping("/history")
+    @ApiOperation(value = "咨询历史记录")
+    public Result<List<RecentSession>> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+        log.info("咨询历史记录:{}", counselorHistoryDTO);
+        List<RecentSession> sessions = CounselorService.getHistory(counselorHistoryDTO);
+        return Result.success(sessions);
+    }
+
+    /**
+     * 咨询师咨询页面
+     * @param sessionid
+     * @param clientid
+     * @return
+     */
+    @GetMapping("/session/{sessionid}/{clientid}")
+    @ApiOperation(value = "咨询师咨询页面")
+    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
+        CounselorSessionVO counselorSessionVO = CounselorService.getSession(sessionid, clientid);
+        return Result.success(counselorSessionVO);
+    }
+
+    /**
+     * 咨询师添加咨询评价
+     * @param sessionAddAdviceDTO
+     * @return
+     */
+    @PutMapping("/session")
+    @ApiOperation(value = "咨询师添加咨询评价")
+    public Result addSessionAdvice(@RequestBody SessionAddAdviceDTO sessionAddAdviceDTO, @PathVariable Long sessionid) {
+        log.info("咨询师添加咨询评价:{}", sessionAddAdviceDTO);
+        CounselorService.addSessionAdvice(sessionAddAdviceDTO, sessionid);
+        return Result.success();
     }
 }

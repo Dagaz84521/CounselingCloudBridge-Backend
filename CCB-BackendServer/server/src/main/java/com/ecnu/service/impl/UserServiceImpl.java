@@ -8,10 +8,7 @@ import com.ecnu.dto.SmsDTO;
 import com.ecnu.dto.UserLoginDTO;
 import com.ecnu.dto.UserRegisterDTO;
 import com.ecnu.entity.User;
-import com.ecnu.exception.AccountBannedException;
-import com.ecnu.exception.AccountInactivedException;
-import com.ecnu.exception.AccountNotFoundException;
-import com.ecnu.exception.PasswordErrorException;
+import com.ecnu.exception.*;
 import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.UserService;
 import com.ecnu.utils.SmsUtil;
@@ -65,6 +62,10 @@ public class UserServiceImpl implements UserService {
      * @param userRegisterDTO
      */
     public void register(UserRegisterDTO userRegisterDTO) {
+        String phoneNumber = userRegisterDTO.getPhoneNumber();
+        if(userMapper.getByPhoneNumber(phoneNumber) == null) {
+            throw new AccountHasExistedException(MessageConstant.ACCOUNT_HAS_EXISTED);
+        }
         User user = new User();
 
         BeanUtils.copyProperties(userRegisterDTO, user);

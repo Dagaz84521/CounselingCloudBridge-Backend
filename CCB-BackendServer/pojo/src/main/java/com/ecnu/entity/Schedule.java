@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CounselorSchedule implements Serializable {
+public class Schedule implements Serializable {
 
     //排班唯一标识
     private Long scheduleId;
@@ -23,11 +23,8 @@ public class CounselorSchedule implements Serializable {
     //咨询师用户ID
     private Long counselorId;
 
-    //工作开始时间
-    private LocalDateTime startTime;
-
-    //工作结束时间
-    private LocalDateTime endTime;
+    //排班日期
+    private String dayOfWeek;
 
     //排班状态：激活、未激活
     private String status;

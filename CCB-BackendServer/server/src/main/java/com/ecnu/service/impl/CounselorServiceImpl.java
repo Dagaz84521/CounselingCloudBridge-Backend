@@ -2,17 +2,22 @@ package com.ecnu.service.impl;
 
 import com.ecnu.constant.SessionStatusConstant;
 import com.ecnu.context.BaseContext;
-import com.ecnu.dto.CounselorTodaySessionVO;
+import com.ecnu.dto.CounselorHistoryDTO;
+import com.ecnu.dto.CounselorTodaySessionDTO;
+import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.entity.Counselor;
 import com.ecnu.entity.Session;
 import com.ecnu.entity.User;
 import com.ecnu.mapper.CounselorMapper;
-import com.ecnu.mapper.CounselorScheduleMapper;
+import com.ecnu.mapper.ScheduleMapper;
 import com.ecnu.mapper.SessionsMapper;
 import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.CounselorService;
 import com.ecnu.vo.CounselorInfo;
+import com.ecnu.vo.CounselorSessionVO;
 import com.ecnu.vo.RecentSession;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +36,7 @@ public class CounselorServiceImpl implements CounselorService {
     @Autowired
     private SessionsMapper sessionsMapper;
     @Autowired
-    private CounselorScheduleMapper counselorScheduleMapper;
+    private ScheduleMapper scheduleMapper;
 
     /**
      * 获取咨询师信息
@@ -40,13 +45,13 @@ public class CounselorServiceImpl implements CounselorService {
     public CounselorInfo getCounselorInfo() {
         User user = userMapper.geById(BaseContext.getCurrentId());
         Counselor counselor = counselorMapper.getById(BaseContext.getCurrentId());
-        CounselorTodaySessionVO counselorTodaySessionVO = sessionsMapper.getCounselorTodaySession(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED);
+        CounselorTodaySessionDTO counselorTodaySessionDTO = sessionsMapper.getCounselorTodaySession(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED);
         CounselorInfo counselorInfo = new CounselorInfo().builder()
                 .realName(user.getRealName())
                 .avatarUrl(user.getAvatarUrl())
                 .totalSessions(sessionsMapper.getTotalSessions(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED))
-                .todaySessions(counselorTodaySessionVO.getTodaySessions())
-                .todayHours(counselorTodaySessionVO.getTodayHours())
+                .todaySessions(counselorTodaySessionDTO.getTodaySessions())
+                .todayHours(counselorTodaySessionDTO.getTodayHours())
                 .currentSessions(counselor.getCurrentSessions())
                 .build();
         return counselorInfo;
@@ -57,7 +62,7 @@ public class CounselorServiceImpl implements CounselorService {
      * @return
      */
     public List<LocalDate> getSchedule() {
-        List<LocalDate> schedule = counselorScheduleMapper.getSchedule(BaseContext.getCurrentId());
+        List<LocalDate> schedule = scheduleMapper.getSchedule(BaseContext.getCurrentId());
         return schedule;
     }
 
@@ -66,15 +71,7 @@ public class CounselorServiceImpl implements CounselorService {
      * @return
      */
     public List<RecentSession> getRecentSessions() {
-        List<Session> sessions = sessionsMapper.getRecentSessions(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED);
-        List<RecentSession> recentSessions = new ArrayList<>();
-        for (Session session : sessions) {
-            RecentSession recentSession = new RecentSession();
-            BeanUtils.copyProperties(session, recentSession);
-            User user = userMapper.geById(session.getClientId());
-            recentSession.setRealName(user.getRealName());
-            recentSessions.add(recentSession);
-        }
+        List<RecentSession> recentSessions = sessionsMapper.getRecentSessions(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED);
         return recentSessions;
     }
 
@@ -109,5 +106,42 @@ public class CounselorServiceImpl implements CounselorService {
     @Override
     public Counselor getById(Long counselorId) {
         return counselorMapper.getById(counselorId);
+    }
+
+    /**
+     * 获取咨询师的历史会话
+     * @return
+     */
+    public List<RecentSession> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+        PageHelper.startPage(counselorHistoryDTO.getPage(), counselorHistoryDTO.getPagesize());
+        counselorHistoryDTO.setCounselorId(BaseContext.getCurrentId());
+        Page<RecentSession> page = sessionsMapper.getHistory(counselorHistoryDTO);
+        return page.getResult();
+    }
+
+    /**
+     * 获取咨询师的咨询页面信息
+     * @param clientid
+     * @return
+     */
+    public CounselorSessionVO getSession(Long sessionid, Long clientid) {
+        User user = userMapper.geById(clientid);
+        Session session = sessionsMapper.getById(sessionid);
+        CounselorSessionVO counselorSessionVO = new CounselorSessionVO().builder()
+                .realName(user.getRealName())
+                .phoneNumber(user.getPhoneNumber())
+                .avatarUrl(user.getAvatarUrl())
+                .startTime(session.getStartTime())
+                .rating(session.getRating())
+                .build();
+        return counselorSessionVO;
+    }
+
+    /**
+     * 咨询师添加咨询评价
+     * @param sessionAddAdviceDTO
+     */
+    public void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid) {
+        sessionsMapper.addSessionAdvice(sessionAddAdviceDTO, sessionid);
     }
 }

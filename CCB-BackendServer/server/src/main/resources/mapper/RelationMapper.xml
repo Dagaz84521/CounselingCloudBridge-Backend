@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ecnu.mapper.RelationMapper">
+    <select id="getOnlineCounselor" resultType="com.ecnu.vo.OnlineCounselor">
+        select c.counselor_id, u.real_name,
+            case
+                when c.current_sessions = 5 then false
+                else true
+            end as is_free
+            from counselor_supervisor_relation r
+            inner join counselors c on r.counselor_id = c.counselor_id
+            inner join users u on c.counselor_id = u.user_id
+            where r.supervisor_id = #{currentId}
+    </select>
+</mapper>

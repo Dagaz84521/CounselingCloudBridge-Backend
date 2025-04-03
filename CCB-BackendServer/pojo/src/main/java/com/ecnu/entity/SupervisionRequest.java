@@ -29,8 +29,14 @@ public class SupervisionRequest implements Serializable {
     //关联的会话ID
     private Long sessionId;
 
+    //开始时间
+    private LocalDateTime startTime;
+
+    //结束时间
+    private LocalDateTime endTime;
+
     //请求详情
-    private  String requestDetails;
+    private String requestDetails;
 
     //请求状态：待处理、已接受、已拒绝、已完成
     private String status;

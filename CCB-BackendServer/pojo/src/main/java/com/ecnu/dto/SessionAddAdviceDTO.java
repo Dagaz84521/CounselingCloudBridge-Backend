@@ -6,15 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CounselorTodaySessionVO implements Serializable {
+public class SessionAddAdviceDTO implements Serializable {
 
-    private Integer todaySessions;
+    private String type;
 
-    private LocalDateTime todayHours;
+    private String advice;
 }
