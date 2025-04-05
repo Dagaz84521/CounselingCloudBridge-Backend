@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ecnu.mapper.CounselorMapper">
-    <select id="getCounselorScheduled" resultType="com.ecnu.vo.ClientHomeVO">
+    <select id="getCounselorScheduled" resultType="com.ecnu.vo.ClientHomeVO" parameterType="com.ecnu.dto.ClientCounselorDTO">
         select c.counselor_id, u.real_name, u.avatar_url, c.expertise, c.rating,
             case
                 when c.current_sessions = 5 then false
@@ -20,12 +20,30 @@
                 <when test="isFree == 1">
                     and c.current_sessions &lt; 5
                 </when>
-                <otherwise>
-                </otherwise>
             </choose>
         </where>
         <if test="sortord != null">
             order by c.rating desc
         </if>
+    </select>
+    <select id="getOnlineCounselor" resultType="com.ecnu.vo.OnlineCounselor">
+        select c.counselor_id, u.real_name,
+            case
+                when c.current_sessions = 5 then false
+                else true
+            end as is_free
+            from counselors c
+            inner join users u on c.counselor_id = u.user_id
+            where u.status = active
+    </select>
+    <select id="getCounselorList" resultType="com.ecnu.vo.AdminCounselorVO" parameterType="com.ecnu.dto.AdminCounselorDTO">
+        select c.counselor_id, u.real_name, c.rating, r.supervisor_id
+        from counselors c inner join users u on c.counselor_id = u.user_id
+        left outer join counselor_supervisor_relation r on c.counselor_id = r.counselor_id
+        <where>
+            <if test="name != null">
+                and u.real_name like concat('%', #{name}, '%')
+            </if>
+        </where>
     </select>
 </mapper>

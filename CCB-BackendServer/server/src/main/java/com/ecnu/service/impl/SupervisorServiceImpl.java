@@ -35,7 +35,7 @@ public class SupervisorServiceImpl implements SupervisorService {
     private RelationMapper relationMapper;
 
     public SupervisorInfo getSupervisorInfo() {
-        User user = userMapper.geById(BaseContext.getCurrentId());
+        User user = userMapper.getById(BaseContext.getCurrentId());
         SupervisorTodayRequestDTO supervisorTodayRequestDTO = requestMapper.getSupervisorTodayRequest(BaseContext.getCurrentId(), RequestStatusConstant.COMPLETED);
         SupervisorInfo supervisorInfo = new SupervisorInfo().builder()
                 .realName(user.getRealName())
@@ -47,8 +47,8 @@ public class SupervisorServiceImpl implements SupervisorService {
         return supervisorInfo;
     }
 
-    public List<LocalDate> getSchedule() {
-        List<LocalDate> schedule = scheduleMapper.getSchedule(BaseContext.getCurrentId());
+    public List<String> getSchedule() {
+        List<String> schedule = scheduleMapper.getSchedule(BaseContext.getCurrentId());
         return schedule;
     }
 
@@ -63,7 +63,7 @@ public class SupervisorServiceImpl implements SupervisorService {
         for (SupervisionRequest supervisionRequest : requests) {
             Request request = new Request();
             BeanUtils.copyProperties(supervisionRequest, request);
-            User user = userMapper.geById(supervisionRequest.getCounselorId());
+            User user = userMapper.getById(supervisionRequest.getCounselorId());
             request.setRealName(user.getRealName());
             requestList.add(request);
         }

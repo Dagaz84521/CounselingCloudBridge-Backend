@@ -23,7 +23,7 @@ public interface CounselorService {
      * 获取咨询师排班信息
      * @return
      */
-    List<LocalDate> getSchedule();
+    List<String> getSchedule();
 
     /**
      * 获取咨询师最近咨询信息

@@ -17,7 +17,7 @@ public class CounselorHomeVO implements Serializable {
 
     private CounselorInfo counselorInfo;
 
-    private List<LocalDate> schedule;
+    private List<String> schedule;
 
     private List<RecentSession> recentSessions;
 
