@@ -12,11 +12,9 @@ import com.ecnu.exception.*;
 import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.UserService;
 import com.ecnu.utils.SmsUtil;
-import com.ecnu.vo.UserInfoVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -90,7 +88,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     public User getByUserId(Long currentId) {
-        User user = userMapper.geById(currentId);
+        User user = userMapper.getById(currentId);
         return user;
     }
 

@@ -11,9 +11,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +31,7 @@ public class ClientServiceImpl implements ClientService {
         List<Counselor> counselors = counselorMapper.getTop();
         List<ClientHomeVO> counselorList = new ArrayList<>();
         for (Counselor counselor : counselors) {
-            User user = userMapper.geById(counselor.getCounselorId());
+            User user = userMapper.getById(counselor.getCounselorId());
             ClientHomeVO clientHomeVO = new ClientHomeVO();
             clientHomeVO.setCounselorId(counselor.getCounselorId());
             clientHomeVO.setRealName(user.getRealName());
@@ -45,6 +43,7 @@ public class ClientServiceImpl implements ClientService {
             } else {
                 clientHomeVO.setIsFree(false);
             }
+            counselorList.add(clientHomeVO);
         }
         return counselorList;
     }
@@ -55,7 +54,7 @@ public class ClientServiceImpl implements ClientService {
      */
     public List<ClientHomeVO> getCounselorScheduled(ClientCounselorDTO clientCounselorDTO) {
         PageHelper.startPage(clientCounselorDTO.getPage(), clientCounselorDTO.getPagesize());
-        Page<ClientHomeVO> page = counselorMapper.getCounselorScheduled();
+        Page<ClientHomeVO> page = counselorMapper.getCounselorScheduled(clientCounselorDTO);
         return page.getResult();
     }
 

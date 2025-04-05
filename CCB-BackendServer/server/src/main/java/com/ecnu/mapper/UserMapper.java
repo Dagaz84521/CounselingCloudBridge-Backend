@@ -1,9 +1,11 @@
 package com.ecnu.mapper;
 
 import com.ecnu.annotation.AutoFill;
+import com.ecnu.dto.AdminCounselorDTO;
 import com.ecnu.entity.User;
 import com.ecnu.enumeration.OperationType;
-import com.ecnu.vo.UserInfoVO;
+import com.ecnu.vo.AdminSupervisorVO;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -36,7 +38,7 @@ public interface UserMapper {
      * @return
      */
     @Select("select * from users where user_id = #{currentId}")
-    User geById(Long currentId);
+    User getById(Long currentId);
 
     /**
      * 更新用户信息
@@ -45,4 +47,10 @@ public interface UserMapper {
     @Update("update users set real_name = #{realName}, age = #{age}, gender = #{gender}, occupation = #{occupation}, avatar_url = #{avatarUrl} where user_id = #{userId}")
     @AutoFill(OperationType.UPDATE)
     void update(User user);
+
+    @Update("update users set real_name = #{realName} where user_id = #{counselorId}")
+    @AutoFill(OperationType.UPDATE)
+    void updateCounselor(Long counselorId, String realName);
+
+    Page<AdminSupervisorVO> getSupervisorList(AdminCounselorDTO adminCounselorDTO);
 }

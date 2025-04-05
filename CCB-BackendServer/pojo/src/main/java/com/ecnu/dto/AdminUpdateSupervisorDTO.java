@@ -6,15 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CounselorTodaySessionDTO implements Serializable {
+public class AdminUpdateSupervisorDTO implements Serializable {
+    private Long supervisorId;
 
-    private Long todaySessions;
+    private String realName;
 
-    private LocalDateTime todayHours;
+    private List<String> schedule;
 }

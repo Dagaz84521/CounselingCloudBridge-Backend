@@ -6,15 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CounselorTodaySessionDTO implements Serializable {
+public class ScheduleDTO implements Serializable {
 
-    private Long todaySessions;
+    private String dayOfWeek;
 
-    private LocalDateTime todayHours;
+    private Long counselorId;
+
+    private String UserType;
+
+    private String realName;
+
+    private String avatarUrl;
 }

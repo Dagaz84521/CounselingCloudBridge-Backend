@@ -1,4 +1,4 @@
-package com.ecnu.dto;
+package com.ecnu.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +12,17 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CounselorTodaySessionDTO implements Serializable {
-
+public class AdminHomeVO implements Serializable {
+    
+    private String realName;
+    
+    private String avatarUrl;
+    
     private Long todaySessions;
-
+    
     private LocalDateTime todayHours;
+    
+    private Long currentSessions;
+
+    private Long currentRequests;
 }

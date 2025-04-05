@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CounselorTodaySessionDTO implements Serializable {
+public class AdminTodaySessionDTO implements Serializable {
 
     private Long todaySessions;
 

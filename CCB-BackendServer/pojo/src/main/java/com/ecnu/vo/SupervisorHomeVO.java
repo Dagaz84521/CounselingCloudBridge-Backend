@@ -17,7 +17,7 @@ public class SupervisorHomeVO implements Serializable {
 
     private SupervisorInfo supervisorInfo;
 
-    private List<LocalDate> schedule;
+    private List<String> schedule;
 
     private List<RecentRequest> recentRequests;
 

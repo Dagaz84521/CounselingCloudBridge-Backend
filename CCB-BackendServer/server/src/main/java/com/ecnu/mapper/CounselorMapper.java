@@ -1,8 +1,13 @@
 package com.ecnu.mapper;
 
+import com.ecnu.dto.AdminCounselorDTO;
+import com.ecnu.dto.ClientCounselorDTO;
 import com.ecnu.entity.Counselor;
+import com.ecnu.vo.AdminCounselorVO;
 import com.ecnu.vo.ClientHomeVO;
+import com.ecnu.vo.OnlineCounselor;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -11,6 +16,8 @@ import java.util.List;
 
 @Mapper
 public interface CounselorMapper {
+
+    Page<OnlineCounselor> getOnlineCounselor();
 
     /**
      * 根据id获取咨询师信息
@@ -39,5 +46,11 @@ public interface CounselorMapper {
      * 获取咨询师排班信息
      * @return
      */
-    Page<ClientHomeVO> getCounselorScheduled();
+    Page<ClientHomeVO> getCounselorScheduled(ClientCounselorDTO clientCounselorDTO);
+
+    Page<AdminCounselorVO> getCounselorList(AdminCounselorDTO adminCounselorDTO);
+
+    @Insert("insert into counselors(counselor_id, certification, expertise, rating, max_sessions, current_sessions)" +
+            "values(#{counselorId}, #{certification}, #{expertise}, #{rating}, #{maxSessions}, #{currentSessions})")
+    void insert(Counselor build);
 }

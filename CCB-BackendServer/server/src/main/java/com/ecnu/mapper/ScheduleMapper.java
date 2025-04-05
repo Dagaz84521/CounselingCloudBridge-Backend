@@ -1,9 +1,11 @@
 package com.ecnu.mapper;
 
+import com.ecnu.dto.ScheduleDTO;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -14,6 +16,15 @@ public interface ScheduleMapper {
      * @param currentId
      * @return
      */
-    @Select("select date(start_time) as date from counselor_schedule where counselor_id = #{currentId} and month(start_time) = month(curdate()) and year(start_time) = year(curdate()) ")
-    List<LocalDate> getSchedule(Long currentId);
+    @Select("select day_of_week from schedule where counselor_id = #{currentId})")
+    List<String> getSchedule(Long currentId);
+
+    @Select("select s.day_of_week, s.counselor_id, u.user_type, u.real_name, u.avatar_url from schedule s left outer join users u on s.counselor_id = u.user_id")
+    List<ScheduleDTO> getScheduleDTO();
+
+    @Insert("insert into schedule(day_of_week, counselor_id) values(#{dayOfWeek}, #{counselorId})")
+    void insertCounselorSchedule(Long counselorId, String dayOfWeek);
+
+    @Delete("delete from schedule where counselor_id = #{counselorId}")
+    void deleteCounselorSchedule(Long counselorId);
 }

@@ -4,7 +4,9 @@ import com.ecnu.dto.OnlineCounselorDTO;
 import com.ecnu.result.Result;
 import com.ecnu.service.SupervisorService;
 import com.ecnu.vo.*;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/supervisor")
+@Api(tags = "督导相关接口")
+@Slf4j
 public class SupervisorController {
 
     @Autowired
@@ -25,7 +29,7 @@ public class SupervisorController {
     @ApiOperation(value = "督导首页")
     public Result<SupervisorHomeVO> getHomeInfo() {
         SupervisorInfo supervisorInfo = supervisorService.getSupervisorInfo();
-        List<LocalDate> schedule = supervisorService.getSchedule();
+        List<String> schedule = supervisorService.getSchedule();
         List<RecentRequest> recentRequests = supervisorService.getRecentRequests();
         List<Request> requestList = supervisorService.getRequestList();
         SupervisorHomeVO supervisorHomeVO = new SupervisorHomeVO().builder()
