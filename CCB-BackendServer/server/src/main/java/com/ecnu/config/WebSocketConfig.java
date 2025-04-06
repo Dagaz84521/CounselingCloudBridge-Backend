@@ -1,35 +1,20 @@
 package com.ecnu.config;
 
-import org.springframework.context.annotation.Bean;
+import com.ecnu.handler.ChatWebSocketHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.server.HandshakeInterceptor;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+import org.springframework.web.socket.config.annotation.*;
 
 @Configuration
-@EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer  {
+    @Autowired // 注入Spring管理的Bean
+    private ChatWebSocketHandler chatWebSocketHandler;
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue");
-        config.setApplicationDestinationPrefixes("/app");
-        config.setUserDestinationPrefix("/user");
-    }
-
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws-chat")
-                .setAllowedOriginPatterns("*")
-                .withSockJS()
-                .setInterceptors(httpSessionHandshakeInterceptor());
-    }
-
-    @Bean
-    public HandshakeInterceptor httpSessionHandshakeInterceptor() {
-        return new HttpSessionHandshakeInterceptor();
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        // 注册一个处理器, 端点为 /chat/{sessionId}，允许跨域
+        registry.addHandler(chatWebSocketHandler, "/chat/{sessionId}")
+                .setAllowedOrigins("*");
     }
 }

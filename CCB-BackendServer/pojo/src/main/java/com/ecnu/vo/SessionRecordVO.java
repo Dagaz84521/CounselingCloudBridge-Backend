@@ -14,9 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SessionRecordVO implements Serializable {
 
-    private String content;
+    private Long sessionId;
 
     private Long senderId;
 
-    private LocalDateTime time;
+    private String content;
+
+    private LocalDateTime createdAt;
 }
