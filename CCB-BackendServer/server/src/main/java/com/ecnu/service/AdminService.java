@@ -28,4 +28,6 @@ public interface AdminService {
     void addSupervisor(AdminAddSupervisorDTO adminAddSupervisorDTO);
 
     List<SupervisorListVO> supervisorList();
+
+    List<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO);
 }
