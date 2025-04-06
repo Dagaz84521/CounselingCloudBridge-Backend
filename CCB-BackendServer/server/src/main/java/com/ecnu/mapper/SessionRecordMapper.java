@@ -1,6 +1,8 @@
 package com.ecnu.mapper;
 
+import com.ecnu.annotation.AutoFill;
 import com.ecnu.entity.SessionRecord;
+import com.ecnu.enumeration.OperationType;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -8,10 +10,11 @@ import java.util.List;
 @Mapper
 public interface SessionRecordMapper {
     @Insert({
-            "INSERT INTO session_record (session_id, sender_id, receiver_id, content, anonymized_data, created_at)",
-            "VALUES (#{sessionId}, #{senderId}, #{receiverId}, #{content}, #{anonymizedData}, #{createdAt})"
+            "INSERT INTO session_records (session_id, sender_id, receiver_id, content, anonymized_data)",
+            "VALUES (#{sessionId}, #{senderId}, #{receiverId}, #{content}, #{anonymizedData})"
     })
     @Options(useGeneratedKeys = true, keyProperty = "recordId")
+    @AutoFill(OperationType.CREATE)
     int insert(SessionRecord record);
 
     @Select({

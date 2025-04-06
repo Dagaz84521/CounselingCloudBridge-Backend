@@ -1,20 +1,19 @@
 package com.ecnu.service;
 
 import com.ecnu.dto.SessionRecordDTO;
-import com.ecnu.vo.SessionRecordVO;
-
-import java.util.List;
+import org.springframework.web.socket.WebSocketSession;
 
 public interface ChatService {
-    /**
-     * 给对应的Session插入会话记录，并推送信息
-     * @return SessionRecordVO
-     */
-    SessionRecordVO sendMessage(SessionRecordDTO dto);
 
     /**
-     * 获取会话历史记录
-     * @return List<SessionRecordVO>
+     * 添加会话
+     * @return
      */
-    List<SessionRecordVO> getHistoryMessages(Long sessionId, int page, int size);
+    void registerSession(Long sessionId, WebSocketSession session);
+
+    /**
+     * 发送消息给指定会话
+     * @return
+     */
+    void send(SessionRecordDTO dto);
 }

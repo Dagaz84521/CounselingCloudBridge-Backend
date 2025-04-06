@@ -1,97 +1,83 @@
 package com.ecnu.service.impl;
 
-import com.ecnu.constant.SessionRecordConstant;
 import com.ecnu.dto.SessionRecordDTO;
-import com.ecnu.entity.Session;
 import com.ecnu.entity.SessionRecord;
+import com.ecnu.manager.SessionManager;
 import com.ecnu.mapper.SessionRecordMapper;
-import com.ecnu.result.Result;
 import com.ecnu.service.ChatService;
-import com.ecnu.service.SessionsService;
 import com.ecnu.vo.SessionRecordVO;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
+
+@Slf4j
 @Service
-@RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
+
+    @Autowired
+    private SessionManager sessionManager; // 之前定义的会话管理器
 
     @Autowired
     private SessionRecordMapper sessionRecordMapper;
 
     @Autowired
-    private SessionsService sessionService;
+    private ObjectMapper objectMapper; // 确保已配置Jackson
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
-    @Transactional
-    public SessionRecordVO sendMessage(SessionRecordDTO dto) {
-        // 验证会话有效性
-        Session session = sessionService.validateSessionAccess(dto.getSessionId(), dto.getSenderId());
-
-        Long receiverID = getReceiverID(session, dto.getSenderId());
-
-        SessionRecord record = SessionRecord.builder()
-                .sessionId(dto.getSessionId())
-                .senderId(dto.getSenderId())
-                .receiverId(receiverID)
-                .status(SessionRecordConstant.SENDING)
-                .content(dto.getContent())
-                .anonymizedData(null)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        sessionRecordMapper.insert(record);
-        // 转换为VO并推送
-        SessionRecordVO vo = convertToVO(record);
-        messagingTemplate.convertAndSend(
-                "/session/" + dto.getSessionId(),
-                Result.success(vo)
-        );
-
-        // 异步更新消息状态为已送达
-        updateMessageStatusAsync(record.getRecordId(), SessionRecordConstant.SENT);
-
-        return convertToVO(record);
+    @Override
+    public void registerSession(Long sessionId, WebSocketSession session) {
+        sessionManager.addSession(sessionId, session);
     }
 
-    private Long getReceiverID(Session session, Long senderID) {
-        Long clientId = session.getClientId();
-        Long counselorId = session.getCounselorId();
-        return Objects.equals(clientId, senderID) ? counselorId : clientId;
-    }
+    @Override
+    public void send(SessionRecordDTO dto) {
 
-    private SessionRecordVO convertToVO(SessionRecord message) {
-        return SessionRecordVO.builder()
-                .content(message.getContent())
-                .senderId(message.getSenderId())
-                .time(message.getCreatedAt())
-                .build();
-    }
+        SessionRecord sessionRecord = objectMapper.convertValue(dto, SessionRecord.class);
 
-    @Async
-    public void updateMessageStatusAsync(Long messageId, String status) {
-        sessionRecordMapper.updateRecordStatus(messageId, status);
-    }
+        sessionRecord.setCreatedAt(LocalDateTime.now());
 
-    public List<SessionRecordVO> getHistoryMessages(Long sessionId, int page, int size) {
+        sessionRecordMapper.insert(sessionRecord);
 
-        List<SessionRecord> messages = sessionRecordMapper.selectBySessionId(
-                sessionId, page * size, size
-        );
+        SessionRecordVO sessionRecordVO = objectMapper.convertValue(sessionRecord, SessionRecordVO.class);
 
-        return messages.stream()
-                .map(this::convertToVO)
-                .collect(Collectors.toList());
+        Long sessionId = dto.getSessionId();
+        List<WebSocketSession> targetSessions = sessionManager.getSessions(sessionId);
+        if (targetSessions == null) {
+            log.warn("[消息发送失败] 找不到目标会话 sessionId={}", sessionId);
+            return;
+        }
+        for (WebSocketSession targetSession : targetSessions) {
+            if (!targetSession.isOpen()) {
+                log.warn("[消息发送失败] 会话已关闭 sessionId={}", sessionId);
+                sessionManager.removeSession(targetSession); // 清理无效会话
+                return;
+            }
+
+            try {
+                String message = objectMapper.writeValueAsString(sessionRecordVO);
+                System.out.println(message);
+                // 使用同步发送确保线程安全
+                synchronized (targetSession) {
+                    targetSession.sendMessage(new TextMessage(message));
+                }
+                log.debug("[消息投递成功] sessionId={} payload={}", sessionId, message);
+            } catch (JsonProcessingException e) {
+                log.error("[消息序列化失败] sessionId={} | 错误类型: {} | 详情: {}",
+                        sessionId, e.getClass().getSimpleName(), e.getMessage());
+            } catch (IOException e) {
+                log.error("[消息发送IO异常] sessionId={} | 错误类型: {} | 详情: {}",
+                        sessionId, e.getClass().getSimpleName(), e.getMessage());
+                sessionManager.removeSession(targetSession); // 发生异常时清理会话
+            }
+        }
     }
 }
+
