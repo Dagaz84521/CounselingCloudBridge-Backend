@@ -9,7 +9,7 @@ public interface ChatService {
      * 添加会话
      * @return
      */
-    void registerSession(Long sessionId, WebSocketSession session);
+    void registerSession(Long senderId, WebSocketSession session);
 
     /**
      * 发送消息给指定会话
