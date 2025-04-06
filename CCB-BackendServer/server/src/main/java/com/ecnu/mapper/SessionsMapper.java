@@ -51,13 +51,13 @@ public interface SessionsMapper {
     List<Session> getSessionList(Long currentId, String status);
 
 
-    @Select("SELECT * FROM session WHERE session_id = #{sessionId}")
+    @Select("SELECT * FROM sessions WHERE session_id = #{sessionId}")
     Session getById(@Param("sessionId") Long sessionId);
 
-    @Update("UPDATE session SET status = #{status}, end_time = #{endTime} WHERE session_id = #{sessionId}")
+    @Update("UPDATE sessions SET status = #{status}, end_time = #{endTime} WHERE session_id = #{sessionId}")
     int updateSessionStatus(Session session);
 
-    @Select("SELECT * FROM session WHERE client_id = #{userId} OR counselor_id = #{userId} ORDER BY start_time DESC")
+    @Select("SELECT * FROM sessions WHERE client_id = #{userId} OR counselor_id = #{userId} ORDER BY start_time DESC")
     List<Session> selectSessionsByUser(@Param("userId") Long userId);
 
     @Insert("INSERT INTO sessions (client_id, counselor_id, status, start_time) " +
