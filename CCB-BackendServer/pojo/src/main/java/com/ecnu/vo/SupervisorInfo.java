@@ -21,6 +21,6 @@ public class SupervisorInfo {
 
     private Long todayRequests;
 
-    private LocalDateTime todayHours;
+    private String todayHours;
 
 }

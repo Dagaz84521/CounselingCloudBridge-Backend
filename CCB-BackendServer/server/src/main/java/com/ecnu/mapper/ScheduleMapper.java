@@ -16,7 +16,7 @@ public interface ScheduleMapper {
      * @param currentId
      * @return
      */
-    @Select("select day_of_week from schedule where counselor_id = #{currentId})")
+    @Select("select day_of_week from schedule where counselor_id = #{currentId}")
     List<String> getSchedule(Long currentId);
 
     @Select("select s.day_of_week, s.counselor_id, u.user_type, u.real_name, u.avatar_url from schedule s left outer join users u on s.counselor_id = u.user_id")

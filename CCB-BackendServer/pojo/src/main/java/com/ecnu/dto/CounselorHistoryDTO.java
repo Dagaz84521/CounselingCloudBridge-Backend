@@ -14,8 +14,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CounselorHistoryDTO implements Serializable {
 
-    private Long counselorId;
-
     private String name;
 
     private LocalDate date;

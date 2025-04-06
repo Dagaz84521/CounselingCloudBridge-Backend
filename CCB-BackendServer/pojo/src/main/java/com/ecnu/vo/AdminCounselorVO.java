@@ -24,7 +24,7 @@ public class AdminCounselorVO implements Serializable {
 
     private Long totalSessions;
 
-    private LocalDateTime totalHours;
+    private String totalHours;
 
     private Integer rating;
 

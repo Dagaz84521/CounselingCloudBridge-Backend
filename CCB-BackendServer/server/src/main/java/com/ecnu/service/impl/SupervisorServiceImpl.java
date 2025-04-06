@@ -37,12 +37,21 @@ public class SupervisorServiceImpl implements SupervisorService {
     public SupervisorInfo getSupervisorInfo() {
         User user = userMapper.getById(BaseContext.getCurrentId());
         SupervisorTodayRequestDTO supervisorTodayRequestDTO = requestMapper.getSupervisorTodayRequest(BaseContext.getCurrentId(), RequestStatusConstant.COMPLETED);
+        Long seconds = supervisorTodayRequestDTO.getTodayHours();
+        String todayHours = "00:00:00";
+        if(seconds != null) {
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        }
         SupervisorInfo supervisorInfo = new SupervisorInfo().builder()
                 .realName(user.getRealName())
                 .avatarUrl(user.getAvatarUrl())
                 .totalRequests(requestMapper.getTotalRequests(BaseContext.getCurrentId(), RequestStatusConstant.COMPLETED))
                 .todayRequests(supervisorTodayRequestDTO.getTodayRequests())
-                .todayHours(supervisorTodayRequestDTO.getTodayHours())
+                .todayHours(todayHours)
                 .build();
         return supervisorInfo;
     }
@@ -54,6 +63,15 @@ public class SupervisorServiceImpl implements SupervisorService {
 
     public List<RecentRequest> getRecentRequests() {
         List<RecentRequest> recentRequests = requestMapper.getRecentRequests(BaseContext.getCurrentId(), RequestStatusConstant.COMPLETED);
+        for (RecentRequest recentRequest : recentRequests) {
+            Long seconds = Long.parseLong(recentRequest.getDuration());
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            String duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            recentRequest.setDuration(duration);
+        }
         return recentRequests;
     }
 

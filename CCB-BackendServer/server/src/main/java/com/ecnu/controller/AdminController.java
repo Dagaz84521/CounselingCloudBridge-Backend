@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @Slf4j
 @Api(tags = "管理员相关接口")
 public class AdminController {
@@ -51,7 +51,7 @@ public class AdminController {
 
     @GetMapping("/schedule/{dateofweek}")
     @ApiOperation(value = "某一天排班")
-    public Result<ScheduleOfDayVO> getScheduleOfDay(Integer dateofweek) {
+    public Result<ScheduleOfDayVO> getScheduleOfDay(@PathVariable Integer dateofweek) {
         String[] days = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
         ScheduleOfDayVO scheduleOfDayVO = adminService.getScheduleOfDay(days[dateofweek - 1]);
         return Result.success(scheduleOfDayVO);
@@ -97,6 +97,13 @@ public class AdminController {
     public Result addSupervisor(@RequestBody AdminAddSupervisorDTO adminAddSupervisorDTO) {
         adminService.addSupervisor(adminAddSupervisorDTO);
         return Result.success();
+    }
+
+    @GetMapping("/supervisorlist")
+    @ApiOperation(value = "督导列表")
+    public Result<List<SupervisorListVO>> getSupervisorList() {
+        List<SupervisorListVO> supervisorList = adminService.supervisorList();
+        return Result.success(supervisorList);
     }
 
 }
