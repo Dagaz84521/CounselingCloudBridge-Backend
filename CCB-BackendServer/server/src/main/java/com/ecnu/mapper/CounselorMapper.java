@@ -50,7 +50,7 @@ public interface CounselorMapper {
 
     Page<AdminCounselorVO> getCounselorList(AdminCounselorDTO adminCounselorDTO);
 
-    @Insert("insert into counselors(counselor_id, certification, expertise)" +
-            "values(#{counselorId}, #{certification}, #{expertise})")
-    void insert(Counselor build);
+    @Insert("insert into counselors(counselor_id, certification, expertise, years_experiencem, bio)" +
+            "values(#{counselorId}, #{certification}, #{expertise}, #{years_experiencem},#{bio})")
+    void insert(Counselor counselor);
 }
