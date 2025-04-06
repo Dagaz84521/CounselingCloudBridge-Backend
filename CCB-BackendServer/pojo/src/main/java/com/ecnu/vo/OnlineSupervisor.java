@@ -11,9 +11,9 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OnlineCounselor implements Serializable {
+public class OnlineSupervisor implements Serializable {
 
-    private Long counselorId;
+    private Long supervisorId;
 
     private String realName;
 
