@@ -10,4 +10,9 @@
             and real_name like concat('%', #{name}, '%')
         </if>
     </select>
+    <select id="getOnlineSupervisor" resultType="com.ecnu.vo.OnlineSupervisor">
+        select user_id as supervisorId, real_name, true as isFree
+        from users
+        where user_type = 'supervisor' and status = 'active'
+    </select>
 </mapper>

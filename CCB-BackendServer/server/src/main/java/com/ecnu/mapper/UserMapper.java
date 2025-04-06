@@ -2,9 +2,11 @@ package com.ecnu.mapper;
 
 import com.ecnu.annotation.AutoFill;
 import com.ecnu.dto.AdminCounselorDTO;
+import com.ecnu.dto.OnlineCounselorDTO;
 import com.ecnu.entity.User;
 import com.ecnu.enumeration.OperationType;
 import com.ecnu.vo.AdminSupervisorVO;
+import com.ecnu.vo.OnlineSupervisor;
 import com.ecnu.vo.SupervisorListVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
@@ -62,4 +64,6 @@ public interface UserMapper {
 
     @Update("update users set status = 'inactive' where user_id = #{currentId}")
     void logout(Long currentId);
+
+    Page<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO);
 }

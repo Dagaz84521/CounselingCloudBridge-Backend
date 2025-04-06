@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRegisterDTO, user);
 
         user.setUserType(UserTypeConstant.CLIENT);
-        user.setStatus(CommonStatusConstant.ACTIVE);
+        user.setStatus(CommonStatusConstant.INACTIVE);
 
         userMapper.register(user);
     }
