@@ -60,7 +60,7 @@ public interface SessionsMapper {
     @Select("SELECT * FROM session WHERE client_id = #{userId} OR counselor_id = #{userId} ORDER BY start_time DESC")
     List<Session> selectSessionsByUser(@Param("userId") Long userId);
 
-    @Insert("INSERT INTO session (client_id, counselor_id, status, start_time) " +
+    @Insert("INSERT INTO sessions (client_id, counselor_id, status, start_time) " +
             "VALUES (#{clientId}, #{counselorId}, #{status}, #{startTime})")
     @Options(useGeneratedKeys = true, keyProperty = "sessionId")
     int insertSession(Session session);
@@ -77,7 +77,7 @@ public interface SessionsMapper {
      * @param sessionAddAdviceDTO
      * @param sessionid
      */
-    @Update("UPDATE session SET advice = #{advice}, type = #{type} WHERE session_id = #{sessionid}")
+    @Update("UPDATE sessions SET advice = #{advice}, type = #{type} WHERE session_id = #{sessionid}")
     void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid);
 
     @Select("select count(*) as todaySessions, sum(timestampdiff(second, start_time, end_time)) as todayHours from sessions where status = #{status} and date(start_time) = curdate()")

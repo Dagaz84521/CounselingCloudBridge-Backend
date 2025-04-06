@@ -33,8 +33,8 @@ public class ChatServiceImpl implements ChatService {
     private ObjectMapper objectMapper; // 确保已配置Jackson
 
     @Override
-    public void registerSession(Long sessionId, WebSocketSession session) {
-        sessionManager.addSession(sessionId, session);
+    public void registerSession(Long senderId, WebSocketSession session) {
+        sessionManager.addUserSession(senderId, session);
     }
 
     @Override
@@ -48,35 +48,35 @@ public class ChatServiceImpl implements ChatService {
 
         SessionRecordVO sessionRecordVO = objectMapper.convertValue(sessionRecord, SessionRecordVO.class);
 
-        Long sessionId = dto.getSessionId();
-        List<WebSocketSession> targetSessions = sessionManager.getSessions(sessionId);
-        if (targetSessions == null) {
-            log.warn("[消息发送失败] 找不到目标会话 sessionId={}", sessionId);
+        Long userId = dto.getReceiverId();
+
+        WebSocketSession targetSession = sessionManager.getUserSession(userId);
+
+        if (targetSession == null) {
+            log.warn("[消息发送失败] 无对应会话 userId={}", userId);
             return;
         }
-        for (WebSocketSession targetSession : targetSessions) {
-            if (!targetSession.isOpen()) {
-                log.warn("[消息发送失败] 会话已关闭 sessionId={}", sessionId);
-                sessionManager.removeSession(targetSession); // 清理无效会话
-                return;
-            }
+        if (!targetSession.isOpen()) {
+            log.warn("[消息发送失败] 会话已关闭 userId={}", userId);
+            sessionManager.removeSession(targetSession); // 清理无效会话
+            return;
+        }
 
-            try {
-                String message = objectMapper.writeValueAsString(sessionRecordVO);
-                System.out.println(message);
-                // 使用同步发送确保线程安全
-                synchronized (targetSession) {
-                    targetSession.sendMessage(new TextMessage(message));
-                }
-                log.debug("[消息投递成功] sessionId={} payload={}", sessionId, message);
-            } catch (JsonProcessingException e) {
-                log.error("[消息序列化失败] sessionId={} | 错误类型: {} | 详情: {}",
-                        sessionId, e.getClass().getSimpleName(), e.getMessage());
-            } catch (IOException e) {
-                log.error("[消息发送IO异常] sessionId={} | 错误类型: {} | 详情: {}",
-                        sessionId, e.getClass().getSimpleName(), e.getMessage());
-                sessionManager.removeSession(targetSession); // 发生异常时清理会话
+        try {
+            String message = objectMapper.writeValueAsString(sessionRecordVO);
+            System.out.println(message);
+            // 使用同步发送确保线程安全
+            synchronized (targetSession) {
+                targetSession.sendMessage(new TextMessage(message));
             }
+            log.debug("[消息投递成功] userId={} payload={}", userId, message);
+        } catch (JsonProcessingException e) {
+            log.error("[消息序列化失败] userId={} | 错误类型: {} | 详情: {}",
+                    userId, e.getClass().getSimpleName(), e.getMessage());
+        } catch (IOException e) {
+            log.error("[消息发送IO异常] userId={} | 错误类型: {} | 详情: {}",
+                    userId, e.getClass().getSimpleName(), e.getMessage());
+            sessionManager.removeSession(targetSession); // 发生异常时清理会话
         }
     }
 }
