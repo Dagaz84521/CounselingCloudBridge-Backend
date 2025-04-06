@@ -3,12 +3,8 @@ package com.ecnu.service;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.entity.Counselor;
-import com.ecnu.vo.CounselorInfo;
-import com.ecnu.vo.CounselorSessionVO;
-import com.ecnu.vo.RecentSession;
-import com.ecnu.vo.Session;
+import com.ecnu.vo.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface CounselorService {
@@ -73,4 +69,11 @@ public interface CounselorService {
      * @param sessionAddAdviceDTO
      */
     void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid);
+
+
+    /**
+     * 获取咨询师详情
+     * @param counselorId
+     */
+    CounselorDetailVO getCounselorDetailById(Long counselorId);
 }

@@ -7,11 +7,11 @@ import com.ecnu.service.CounselorService;
 import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,7 +21,7 @@ import java.util.List;
 public class CounselorController {
 
     @Autowired
-    private CounselorService CounselorService;
+    private CounselorService counselorService;
 
 
     /**
@@ -31,10 +31,10 @@ public class CounselorController {
     @GetMapping("/home")
     @ApiOperation(value = "咨询师首页")
     public Result<CounselorHomeVO> getHomeInfo() {
-        CounselorInfo counselorInfo = CounselorService.getCounselorInfo();
-        List<String> schedule = CounselorService.getSchedule();
-        List<RecentSession> recentSessions = CounselorService.getRecentSessions();
-        List<Session> sessionList = CounselorService.getSessionList();
+        CounselorInfo counselorInfo = counselorService.getCounselorInfo();
+        List<String> schedule = counselorService.getSchedule();
+        List<RecentSession> recentSessions = counselorService.getRecentSessions();
+        List<Session> sessionList = counselorService.getSessionList();
         CounselorHomeVO counselorHomeVO = new CounselorHomeVO().builder()
                 .counselorInfo(counselorInfo)
                 .schedule(schedule)
@@ -53,7 +53,7 @@ public class CounselorController {
     @ApiOperation(value = "咨询历史记录")
     public Result<List<RecentSession>> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
         log.info("咨询历史记录:{}", counselorHistoryDTO);
-        List<RecentSession> sessions = CounselorService.getHistory(counselorHistoryDTO);
+        List<RecentSession> sessions = counselorService.getHistory(counselorHistoryDTO);
         return Result.success(sessions);
     }
 
@@ -66,7 +66,7 @@ public class CounselorController {
     @GetMapping("/session/{sessionid}/{clientid}")
     @ApiOperation(value = "咨询师咨询页面")
     public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
-        CounselorSessionVO counselorSessionVO = CounselorService.getSession(sessionid, clientid);
+        CounselorSessionVO counselorSessionVO = counselorService.getSession(sessionid, clientid);
         return Result.success(counselorSessionVO);
     }
 
@@ -79,7 +79,29 @@ public class CounselorController {
     @ApiOperation(value = "咨询师添加咨询评价")
     public Result addSessionAdvice(@RequestBody SessionAddAdviceDTO sessionAddAdviceDTO, @PathVariable Long sessionid) {
         log.info("咨询师添加咨询评价:{}", sessionAddAdviceDTO);
-        CounselorService.addSessionAdvice(sessionAddAdviceDTO, sessionid);
+        counselorService.addSessionAdvice(sessionAddAdviceDTO, sessionid);
         return Result.success();
+    }
+
+    /**
+     * 获取咨询师详细信息 (通常由用户或管理员查看)
+     * @param counselorId 咨询师ID
+     * @return 咨询师详细信息
+     */
+    @GetMapping("/detail")
+    @ApiOperation(value = "获取咨询师详细信息")
+    public Result<CounselorDetailVO> getCounselorDetail(
+            @ApiParam(name = "counselor_id", value = "咨询师的用户ID", required = true, example = "1")
+            @RequestParam("counselorId") Long counselorId) {
+
+        log.info("请求获取咨询师详细信息，ID: {}", counselorId);
+
+        CounselorDetailVO counselorDetail = counselorService.getCounselorDetailById(counselorId);
+
+        if (counselorDetail == null) {
+            return Result.error("未找到指定的咨询师");
+        }
+
+        return Result.success(counselorDetail);
     }
 }

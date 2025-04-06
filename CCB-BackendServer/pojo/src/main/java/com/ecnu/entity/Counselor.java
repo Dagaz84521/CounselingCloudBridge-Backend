@@ -26,7 +26,7 @@ public class Counselor implements Serializable {
     private String expertise;
 
     //咨询师综合评分
-    private Integer rating;
+    private Float rating;
 
     //最大同时会话数
     private Integer maxSessions;
@@ -34,4 +34,12 @@ public class Counselor implements Serializable {
     //当前会话数
     private Integer currentSessions;
 
+    //咨询师解决过的咨询总数
+    private Integer totalSessions;
+
+    //工作年数
+    private Integer yearsExperience;
+
+    //个人简介
+    private String bio;
 }
