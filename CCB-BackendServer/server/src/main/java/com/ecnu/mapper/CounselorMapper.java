@@ -32,7 +32,7 @@ public interface CounselorMapper {
      * 给id对应的咨询师的当前会话数加delta
      * @return
      */
-    @Update("UPDATE counselor SET current_sessions = current_sessions + #{delta} WHERE counselor_id = #{counselorId}")
+    @Update("UPDATE counselors SET current_sessions = current_sessions + #{delta} WHERE counselor_id = #{counselorId}")
     int updateCurrentSessions(Long counselorId, int delta);
 
     /**
