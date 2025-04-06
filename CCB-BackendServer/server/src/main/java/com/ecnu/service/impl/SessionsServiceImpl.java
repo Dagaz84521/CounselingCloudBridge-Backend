@@ -26,6 +26,9 @@ public class SessionsServiceImpl implements SessionsService {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private SessionsMapper sessionsMapper;
+
     /**
      * 验证会话访问权限（核心方法）
      */
@@ -45,39 +48,32 @@ public class SessionsServiceImpl implements SessionsService {
      * 创建新会话（带并发控制）
      */
     @Transactional
-    public Session createSession(Long clientId, Long counselorId) {
-        // 使用Redis分布式锁
-        String lockKey = "counselor_lock:" + counselorId;
-        Boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", 30, TimeUnit.SECONDS);
-
-        try {
-            if (Boolean.TRUE.equals(locked)) {
-                Counselor counselor = counselorService.getById(counselorId);
-                if (counselor.getCurrentSessions() >= counselor.getMaxSessions()) {
-                    throw new CounselorBusyException("咨询师会话已满");
-                }
-                Session session = Session.builder()
-                        .clientId(clientId)
-                        .counselorId(counselorId)
-                        .status("pending")
-                        .startTime(LocalDateTime.now()) // 默认5分钟后开始
-                        .build();
-
-                sessionMapper.insertSession(session);
-                counselorService.incrementCurrentSessions(counselorId);
-                return session;
-            }
-            throw new ConcurrentSessionException("系统繁忙，请稍后重试");
-        } finally {
-            redisTemplate.delete(lockKey);
+    public Session startSession(Long clientId, Long counselorId) {
+        Counselor counselor = counselorService.getById(counselorId);
+        if (counselor.getCurrentSessions() >= counselor.getMaxSessions()) {
+            throw new CounselorBusyException("咨询师会话已满");
         }
+        Session session = Session.builder()
+                .clientId(clientId)
+                .counselorId(counselorId)
+                .status("pending")
+                .startTime(LocalDateTime.now()) // 默认5分钟后开始
+                .build();
+
+        sessionMapper.insertSession(session);
+        counselorService.incrementCurrentSessions(counselorId);
+        return session;
     }
     /**
      * 结束会话
      */
     @Transactional
-    public void endSession(Long sessionId, User operator) {
-        Session session = validateSessionAccess(sessionId, operator.getUserId());
+    public void endSession(Long sessionId) {
+        Session session = sessionsMapper.getById(sessionId);
+
+        if (session == null) {
+            throw new IllegalSessionOperationException("非法SessionID");
+        }
 
         if ("closed".equals(session.getStatus())) {
             throw new IllegalSessionOperationException("会话已结束");

@@ -14,10 +14,10 @@ public interface SessionsService {
      * 创建新会话（带并发控制）
      * @return 新创建好的会话
      */
-    Session createSession(Long clientId, Long counselorId);
+    Session startSession(Long clientId, Long counselorId);
     /**
      * 结束会话
      */
-    void endSession(Long sessionId, User operator);
+    void endSession(Long sessionId);
 
 }

@@ -1,8 +1,10 @@
 package com.ecnu.controller;
 
 import com.ecnu.dto.ClientCounselorDTO;
+import com.ecnu.entity.Session;
 import com.ecnu.result.Result;
 import com.ecnu.service.ClientService;
+import com.ecnu.service.SessionsService;
 import com.ecnu.vo.ClientHomeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +25,9 @@ public class ClientController {
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private SessionsService sessionsService;
 
     @GetMapping("/home")
     @ApiOperation(value = "客户首页")
@@ -49,5 +54,32 @@ public class ClientController {
         return Result.success(counselorList);
     }
 
+    /**
+     * 客户开始一个新的咨询
+     * @param
+     * @return
+     */
+    @GetMapping("/session/add")
+    @ApiOperation(value = "查看咨询师排班页面")
+    public Result<Long> startSession(
+            @RequestParam("clientId") Long clientId,
+            @RequestParam("counselorId") Long counselorId) {
+        log.info("客户开始一个新的咨询");
+        Session session = sessionsService.startSession(clientId, counselorId);
+        return Result.success(session.getSessionId());
+    }
 
+    /**
+     * 客户结束一个新的咨询
+     * @param
+     * @return
+     */
+    @GetMapping("/session/end")
+    @ApiOperation(value = "查看咨询师排班页面")
+    public Result<Long> endSession(
+            @RequestParam("sessionId") Long sessionId) {
+        log.info("客户结束一个新的咨询");
+        sessionsService.endSession(sessionId);
+        return Result.success();
+    }
 }
