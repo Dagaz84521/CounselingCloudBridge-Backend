@@ -22,7 +22,7 @@ public class CounselorInfo implements Serializable {
 
     private Long todaySessions;
 
-    private LocalDateTime todayHours;
+    private String todayHours;
 
     private  Integer currentSessions;
 }

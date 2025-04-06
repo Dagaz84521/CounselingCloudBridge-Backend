@@ -132,4 +132,12 @@ public class UserController {
         return Result.success();
     }
 
+    @PostMapping("/logout")
+    @ApiOperation(value = "用户登出")
+    public Result logout() {
+        log.info("用户登出");
+        userService.logout();
+        return Result.success();
+    }
+
 }

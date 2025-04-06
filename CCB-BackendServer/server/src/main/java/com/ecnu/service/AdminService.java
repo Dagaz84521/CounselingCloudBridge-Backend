@@ -26,4 +26,6 @@ public interface AdminService {
     void updateSupervisor(AdminUpdateSupervisorDTO adminUpdateSupervisorDTO);
 
     void addSupervisor(AdminAddSupervisorDTO adminAddSupervisorDTO);
+
+    List<SupervisorListVO> supervisorList();
 }

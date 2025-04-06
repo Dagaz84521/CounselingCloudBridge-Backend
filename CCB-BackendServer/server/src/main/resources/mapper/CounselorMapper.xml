@@ -34,10 +34,10 @@
             end as is_free
             from counselors c
             inner join users u on c.counselor_id = u.user_id
-            where u.status = active
+            where u.status = 'active'
     </select>
     <select id="getCounselorList" resultType="com.ecnu.vo.AdminCounselorVO" parameterType="com.ecnu.dto.AdminCounselorDTO">
-        select c.counselor_id, u.real_name, c.rating, r.supervisor_id
+        select c.counselor_id, u.real_name as counselorName, c.rating, r.supervisor_id
         from counselors c inner join users u on c.counselor_id = u.user_id
         left outer join counselor_supervisor_relation r on c.counselor_id = r.counselor_id
         <where>

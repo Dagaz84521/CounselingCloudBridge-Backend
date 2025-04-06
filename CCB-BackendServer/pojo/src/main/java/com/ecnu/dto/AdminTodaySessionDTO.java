@@ -16,5 +16,5 @@ public class AdminTodaySessionDTO implements Serializable {
 
     private Long todaySessions;
 
-    private LocalDateTime todayHours;
+    private Long todayHours;
 }

@@ -41,11 +41,20 @@ public class AdminServiceImpl implements AdminService {
     public AdminHomeVO getHomeInfo() {
         User user = userMapper.getById(BaseContext.getCurrentId());
         AdminTodaySessionDTO adminTodaySessionDTO = sessionsMapper.getTodaySession(SessionStatusConstant.CLOSED);
+        Long seconds = adminTodaySessionDTO.getTodayHours();
+        String todayHours = "00:00:00";
+        if(seconds != null) {
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        }
         AdminHomeVO adminHomeVO = new AdminHomeVO().builder()
                 .realName(user.getRealName())
                 .avatarUrl(user.getAvatarUrl())
                 .todaySessions(adminTodaySessionDTO.getTodaySessions())
-                .todayHours(adminTodaySessionDTO.getTodayHours())
+                .todayHours(todayHours)
                 .currentSessions(sessionsMapper.getCurrentSessions(SessionStatusConstant.ACTIVE))
                 .currentRequests(requestMapper.getCurrentRequests(RequestStatusConstant.ACCEPTED))
                 .build();
@@ -65,7 +74,7 @@ public class AdminServiceImpl implements AdminService {
         for (int i = 0; i < 7; i++) {
             dayMap.put(days[i], i);
         }
-        Long[][] cnt = new Long[7][2];
+        long[][] cnt = new long[7][2];
         for (ScheduleDTO scheduleDTO : schedules) {
             String day = scheduleDTO.getDayOfWeek();
             String userType = scheduleDTO.getUserType();
@@ -119,9 +128,19 @@ public class AdminServiceImpl implements AdminService {
         Page<AdminCounselorVO> page = counselorMapper.getCounselorList(adminCounselorDTO);
         List<AdminCounselorVO> counselorList = page.getResult();
         for (AdminCounselorVO adminCounselorVO : counselorList) {
-            adminCounselorVO.setSupervisorName(userMapper.getById(adminCounselorVO.getSupervisorId()).getRealName());
+            User user = userMapper.getById(adminCounselorVO.getSupervisorId());
+            adminCounselorVO.setSupervisorName(user == null ? null : user.getRealName());
             adminCounselorVO.setTotalSessions(sessionsMapper.getTotalSessions(adminCounselorVO.getCounselorId(), SessionStatusConstant.CLOSED));
-            adminCounselorVO.setTotalHours(sessionsMapper.getTotalHours(adminCounselorVO.getCounselorId(), SessionStatusConstant.CLOSED));
+            Long seconds = sessionsMapper.getTotalHours(adminCounselorVO.getCounselorId(), SessionStatusConstant.CLOSED);
+            String todayHours = "00:00:00";
+            if(seconds != null) {
+                Long hours = seconds / 3600;
+                Long remainder = seconds % 3600;
+                Long minutes = remainder / 60;
+                seconds = remainder % 60;
+                todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            }
+            adminCounselorVO.setTotalHours(todayHours);
             adminCounselorVO.setSchedule(scheduleMapper.getSchedule(adminCounselorVO.getCounselorId()));
         }
         return counselorList;
@@ -165,7 +184,16 @@ public class AdminServiceImpl implements AdminService {
         List<AdminSupervisorVO> supervisorList = page.getResult();
         for (AdminSupervisorVO adminSupervisorVO : supervisorList) {
             adminSupervisorVO.setTotalRequests(requestMapper.getTotalRequests(adminSupervisorVO.getSupervisorId(), RequestStatusConstant.COMPLETED));
-            adminSupervisorVO.setTotalHours(requestMapper.getTotalHours(adminSupervisorVO.getSupervisorId(), RequestStatusConstant.COMPLETED));
+            Long seconds = requestMapper.getTotalHours(adminSupervisorVO.getSupervisorId(), RequestStatusConstant.COMPLETED);
+            String todayHours = "00:00:00";
+            if(seconds != null) {
+                Long hours = seconds / 3600;
+                Long remainder = seconds % 3600;
+                Long minutes = remainder / 60;
+                seconds = remainder % 60;
+                todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            }
+            adminSupervisorVO.setTotalHours(todayHours);
             adminSupervisorVO.setSchedule(scheduleMapper.getSchedule(adminSupervisorVO.getSupervisorId()));
         }
         return supervisorList;
@@ -190,6 +218,11 @@ public class AdminServiceImpl implements AdminService {
                 .passwordHash("E10ADC3949BA59ABBE56E057F20F883E")
                 .userType(UserTypeConstant.SUPERVISOR)
                 .build());
+    }
+
+    public List<SupervisorListVO> supervisorList() {
+        List<SupervisorListVO> supervisorList = userMapper.supervisorList();
+        return supervisorList;
     }
 
 }

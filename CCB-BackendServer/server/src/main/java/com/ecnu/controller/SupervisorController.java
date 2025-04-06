@@ -47,4 +47,5 @@ public class SupervisorController {
         List<OnlineCounselor> onlineCounselorList = supervisorService.getOnlineCounselor(onlineCounselorDTO);
         return Result.success(onlineCounselorList);
     }
+
 }

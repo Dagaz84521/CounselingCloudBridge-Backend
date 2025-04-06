@@ -28,5 +28,5 @@ public interface RequestMapper {
     Long getCurrentRequests(String status);
 
     @Select("select sum(timestampdiff(second, start_time, end_time)) from supervision_request where supervisor_id = #{supervisorId} and status = #{status}")
-    LocalDateTime getTotalHours(Long supervisorId, String status);
+    Long getTotalHours(Long supervisorId, String status);
 }

@@ -20,7 +20,7 @@ public class AdminHomeVO implements Serializable {
     
     private Long todaySessions;
     
-    private LocalDateTime todayHours;
+    private String todayHours;
     
     private Long currentSessions;
 

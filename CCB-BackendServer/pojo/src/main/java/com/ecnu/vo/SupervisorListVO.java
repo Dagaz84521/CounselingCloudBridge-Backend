@@ -6,21 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminSupervisorVO implements Serializable {
+public class SupervisorListVO implements Serializable {
     private Long supervisorId;
 
     private String realName;
-
-    private Long totalRequests;
-
-    private String totalHours;
-
-    private List<String> schedule;
 }

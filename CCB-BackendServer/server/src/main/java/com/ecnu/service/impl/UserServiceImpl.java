@@ -3,6 +3,7 @@ package com.ecnu.service.impl;
 import com.ecnu.constant.CommonStatusConstant;
 import com.ecnu.constant.MessageConstant;
 import com.ecnu.constant.UserTypeConstant;
+import com.ecnu.context.BaseContext;
 import com.ecnu.dto.ResetPasswordDTO;
 import com.ecnu.dto.SmsDTO;
 import com.ecnu.dto.UserLoginDTO;
@@ -108,5 +109,9 @@ public class UserServiceImpl implements UserService {
         int code = (int)((Math.random() * 9 + 1) * 100000);
         SmsDTO smsDTO = new SmsDTO(phoneNumber, String.valueOf(code));
         smsUtil.sendSms(smsDTO);
+    }
+
+    public void logout() {
+        userMapper.logout(BaseContext.getCurrentId());
     }
 }

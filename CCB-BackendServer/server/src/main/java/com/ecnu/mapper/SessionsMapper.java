@@ -1,10 +1,7 @@
 package com.ecnu.mapper;
 
 
-import com.ecnu.dto.AdminTodaySessionDTO;
-import com.ecnu.dto.CounselorHistoryDTO;
-import com.ecnu.dto.CounselorTodaySessionDTO;
-import com.ecnu.dto.SessionAddAdviceDTO;
+import com.ecnu.dto.*;
 import com.ecnu.entity.Session;
 import com.ecnu.vo.RecentSession;
 import com.github.pagehelper.Page;
@@ -42,7 +39,7 @@ public interface SessionsMapper {
      * @param currentId
      * @return
      */
-    @Select("select s.session_id, s.client_id, s.start_time, s.rating, u.real_name, timestampdiff(second, s.start_time, s.end_time) from sessions s left outer join users u on s.client_id = u.user_id where s.counselor_id = #{currentId} and s.status = #{status} order by s.start_time desc limit 3")
+    @Select("select s.session_id, s.client_id, s.start_time, s.rating, u.real_name, timestampdiff(second, s.start_time, s.end_time) as duration from sessions s left outer join users u on s.client_id = u.user_id where s.counselor_id = #{currentId} and s.status = #{status} order by s.start_time desc limit 3")
     List<RecentSession> getRecentSessions(Long currentId, String status);
 
     /**
@@ -90,5 +87,5 @@ public interface SessionsMapper {
     Long getCurrentSessions(String status);
 
     @Select("select sum(timestampdiff(second, start_time, end_time)) from sessions where counselor_id = #{counselorId} and status = #{status}")
-    LocalDateTime getTotalHours(Long counselorId, String status);
+    Long getTotalHours(Long counselorId, String status);
 }
