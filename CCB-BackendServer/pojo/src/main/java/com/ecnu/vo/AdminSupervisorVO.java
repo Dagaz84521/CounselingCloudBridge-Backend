@@ -7,20 +7,20 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecentRequest implements Serializable {
-
-    private Long requestId;
-
-    private Long counselorId;
+public class AdminSupervisorVO implements Serializable {
+    private Long supervisorId;
 
     private String realName;
 
-    private String duration;
+    private Long totalRequests;
 
-    private LocalDateTime startTime;
+    private String totalHours;
+
+    private List<String> schedule;
 }

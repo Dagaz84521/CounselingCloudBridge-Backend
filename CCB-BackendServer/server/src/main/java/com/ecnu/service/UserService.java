@@ -45,4 +45,6 @@ public interface UserService {
      * @param phoneNumber
      */
     void getCode(String phoneNumber);
+
+    void logout();
 }

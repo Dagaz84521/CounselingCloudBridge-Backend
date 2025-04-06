@@ -1,4 +1,4 @@
-package com.ecnu.vo;
+package com.ecnu.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,21 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SupervisorHomeVO implements Serializable {
+public class AdminUpdateSupervisorDTO implements Serializable {
+    private Long supervisorId;
 
-    private SupervisorInfo supervisorInfo;
+    private String realName;
 
     private List<String> schedule;
-
-    private List<RecentRequest> recentRequests;
-
-    private List<Request> requestList;
-
 }

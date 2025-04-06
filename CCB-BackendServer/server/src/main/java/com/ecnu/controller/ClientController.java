@@ -41,7 +41,7 @@ public class ClientController {
      */
     @GetMapping("/counselor")
     @ApiOperation(value = "查看咨询师排班页面")
-    public Result<List<ClientHomeVO>> getCounselorScheduled(@RequestParam ClientCounselorDTO clientCounselorDTO) {
+    public Result<List<ClientHomeVO>> getCounselorScheduled(ClientCounselorDTO clientCounselorDTO) {
         log.info("查看咨询师排班页面");
 
         List<ClientHomeVO> counselorList = clientService.getCounselorScheduled(clientCounselorDTO);

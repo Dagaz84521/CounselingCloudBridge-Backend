@@ -12,15 +12,17 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecentRequest implements Serializable {
-
-    private Long requestId;
-
-    private Long counselorId;
-
+public class AdminHomeVO implements Serializable {
+    
     private String realName;
+    
+    private String avatarUrl;
+    
+    private Long todaySessions;
+    
+    private String todayHours;
+    
+    private Long currentSessions;
 
-    private String duration;
-
-    private LocalDateTime startTime;
+    private Long currentRequests;
 }

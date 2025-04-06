@@ -32,7 +32,7 @@ public class CounselorController {
     @ApiOperation(value = "咨询师首页")
     public Result<CounselorHomeVO> getHomeInfo() {
         CounselorInfo counselorInfo = CounselorService.getCounselorInfo();
-        List<LocalDate> schedule = CounselorService.getSchedule();
+        List<String> schedule = CounselorService.getSchedule();
         List<RecentSession> recentSessions = CounselorService.getRecentSessions();
         List<Session> sessionList = CounselorService.getSessionList();
         CounselorHomeVO counselorHomeVO = new CounselorHomeVO().builder()

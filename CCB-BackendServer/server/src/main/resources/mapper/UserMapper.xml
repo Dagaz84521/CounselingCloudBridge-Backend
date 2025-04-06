@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ecnu.mapper.UserMapper">
+    <select id="getSupervisorList" resultType="com.ecnu.vo.AdminSupervisorVO" parameterType="com.ecnu.dto.AdminCounselorDTO">
+        select user_id as supervisorId, real_name
+        from users
+        where user_type = 'supervisor'
+        <if test="name != null">
+            and real_name like concat('%', #{name}, '%')
+        </if>
+    </select>
+</mapper>

@@ -11,6 +11,7 @@
             from counselor_supervisor_relation r
             inner join counselors c on r.counselor_id = c.counselor_id
             inner join users u on c.counselor_id = u.user_id
-            where r.supervisor_id = #{currentId}
+            where r.supervisor_id = #{currentId} and u.status = 'active'
     </select>
+
 </mapper>

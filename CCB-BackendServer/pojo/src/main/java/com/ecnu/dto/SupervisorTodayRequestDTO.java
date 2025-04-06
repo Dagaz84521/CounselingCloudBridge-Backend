@@ -16,5 +16,5 @@ public class SupervisorTodayRequestDTO implements Serializable {
 
     private Long todayRequests;
 
-    private LocalDateTime todayHours;
+    private Long todayHours;
 }

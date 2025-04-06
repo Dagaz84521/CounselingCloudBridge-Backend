@@ -6,21 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecentRequest implements Serializable {
-
-    private Long requestId;
-
+public class ScheduleCounselorVO implements Serializable {
     private Long counselorId;
 
     private String realName;
 
-    private String duration;
-
-    private LocalDateTime startTime;
+    private String avatarUrl;
 }

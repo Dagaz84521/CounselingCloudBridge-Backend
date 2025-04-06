@@ -3,15 +3,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ecnu.mapper.SessionsMapper">
     <select id="getHistory" resultType="com.ecnu.vo.RecentSession">
-        select s.session_id, s.client_id, s.real_name, s.duration, s.start_time, s.rating, u.real_name from sessions s left outer join users u on s.client_id = u.user_id
-        <where>
+        select s.session_id, s.client_id, u.real_name, timestampdiff(second, s.start_time, s.end_time) as duration, s.start_time, s.rating from sessions s left outer join users u on s.client_id = u.user_id
+        where s.status = 'closed'
             <if test="name != null">
                 and u.real_name like concat('%', #{name}, '%')
             </if>
             <if test="date != null">
                 and date(start_time) = #{date}
             </if>
-        </where>
         order by start_time desc
     </select>
 </mapper>

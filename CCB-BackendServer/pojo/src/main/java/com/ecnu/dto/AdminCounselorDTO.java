@@ -6,17 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CounselorHistoryDTO implements Serializable {
+public class AdminCounselorDTO implements Serializable {
 
     private String name;
-
-    private LocalDate date;
 
     private Integer page;
 

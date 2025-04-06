@@ -1,9 +1,7 @@
 package com.ecnu.mapper;
 
 
-import com.ecnu.dto.CounselorHistoryDTO;
-import com.ecnu.dto.CounselorTodaySessionDTO;
-import com.ecnu.dto.SessionAddAdviceDTO;
+import com.ecnu.dto.*;
 import com.ecnu.entity.Session;
 import com.ecnu.vo.RecentSession;
 import com.github.pagehelper.Page;
@@ -12,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -25,7 +24,7 @@ public interface SessionsMapper {
      * @return
      */
     @Select("select count(*) from sessions where counselor_id = #{currentId} and status = #{status} ")
-    Integer getTotalSessions(Long currentId, String status);
+    Long getTotalSessions(Long currentId, String status);
 
     /**
      * 获取咨询师今日咨询次数和时长
@@ -40,7 +39,7 @@ public interface SessionsMapper {
      * @param currentId
      * @return
      */
-    @Select("select s.session_id, s.client_id, s.start_time, s.rating, u.real_name, timestampdiff(second, s.start_time, s.end_time) from sessions s left outer join users u on s.client_id = u.user_id where s.counselor_id = #{currentId} and s.status = #{status} order by s.start_time desc limit 3")
+    @Select("select s.session_id, s.client_id, s.start_time, s.rating, u.real_name, timestampdiff(second, s.start_time, s.end_time) as duration from sessions s left outer join users u on s.client_id = u.user_id where s.counselor_id = #{currentId} and s.status = #{status} order by s.start_time desc limit 3")
     List<RecentSession> getRecentSessions(Long currentId, String status);
 
     /**
@@ -80,4 +79,13 @@ public interface SessionsMapper {
      */
     @Update("UPDATE session SET advice = #{advice}, type = #{type} WHERE session_id = #{sessionid}")
     void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid);
+
+    @Select("select count(*) as todaySessions, sum(timestampdiff(second, start_time, end_time)) as todayHours from sessions where status = #{status} and date(start_time) = curdate()")
+    AdminTodaySessionDTO getTodaySession(String status);
+
+    @Select("select count(*) from sessions where status = #{status}")
+    Long getCurrentSessions(String status);
+
+    @Select("select sum(timestampdiff(second, start_time, end_time)) from sessions where counselor_id = #{counselorId} and status = #{status}")
+    Long getTotalHours(Long counselorId, String status);
 }

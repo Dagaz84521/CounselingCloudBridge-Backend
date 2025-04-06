@@ -18,11 +18,11 @@ public class CounselorInfo implements Serializable {
 
     private String avatarUrl;
 
-    private Integer totalSessions;
+    private Long totalSessions;
 
-    private Integer todaySessions;
+    private Long todaySessions;
 
-    private LocalDateTime todayHours;
+    private String todayHours;
 
     private  Integer currentSessions;
 }

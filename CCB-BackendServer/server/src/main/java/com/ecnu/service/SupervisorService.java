@@ -13,7 +13,7 @@ public interface SupervisorService {
     
     SupervisorInfo getSupervisorInfo();
 
-    List<LocalDate> getSchedule();
+    List<String> getSchedule();
 
     List<RecentRequest> getRecentRequests();
 

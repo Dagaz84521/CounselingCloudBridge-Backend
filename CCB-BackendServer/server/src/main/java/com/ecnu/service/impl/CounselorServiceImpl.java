@@ -22,7 +22,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,15 +42,24 @@ public class CounselorServiceImpl implements CounselorService {
      * @return
      */
     public CounselorInfo getCounselorInfo() {
-        User user = userMapper.geById(BaseContext.getCurrentId());
+        User user = userMapper.getById(BaseContext.getCurrentId());
         Counselor counselor = counselorMapper.getById(BaseContext.getCurrentId());
         CounselorTodaySessionDTO counselorTodaySessionDTO = sessionsMapper.getCounselorTodaySession(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED);
+        Long seconds = counselorTodaySessionDTO.getTodayHours();
+        String todayHours = "00:00:00";
+        if(seconds != null) {
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        }
         CounselorInfo counselorInfo = new CounselorInfo().builder()
                 .realName(user.getRealName())
                 .avatarUrl(user.getAvatarUrl())
                 .totalSessions(sessionsMapper.getTotalSessions(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED))
                 .todaySessions(counselorTodaySessionDTO.getTodaySessions())
-                .todayHours(counselorTodaySessionDTO.getTodayHours())
+                .todayHours(todayHours)
                 .currentSessions(counselor.getCurrentSessions())
                 .build();
         return counselorInfo;
@@ -61,8 +69,8 @@ public class CounselorServiceImpl implements CounselorService {
      * 获取咨询师的排班信息
      * @return
      */
-    public List<LocalDate> getSchedule() {
-        List<LocalDate> schedule = scheduleMapper.getSchedule(BaseContext.getCurrentId());
+    public List<String> getSchedule() {
+        List<String> schedule = scheduleMapper.getSchedule(BaseContext.getCurrentId());
         return schedule;
     }
 
@@ -72,6 +80,15 @@ public class CounselorServiceImpl implements CounselorService {
      */
     public List<RecentSession> getRecentSessions() {
         List<RecentSession> recentSessions = sessionsMapper.getRecentSessions(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED);
+        for (RecentSession recentSession : recentSessions) {
+            Long seconds = Long.parseLong(recentSession.getDuration());
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            String duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            recentSession.setDuration(duration);
+        }
         return recentSessions;
     }
 
@@ -86,7 +103,7 @@ public class CounselorServiceImpl implements CounselorService {
         for (Session session : sessions) {
             com.ecnu.vo.Session sessionVO = new com.ecnu.vo.Session();
             BeanUtils.copyProperties(session, sessionVO);
-            User user = userMapper.geById(session.getClientId());
+            User user = userMapper.getById(session.getClientId());
             sessionVO.setRealName(user.getRealName());
             sessionList.add(sessionVO);
         }
@@ -114,9 +131,18 @@ public class CounselorServiceImpl implements CounselorService {
      */
     public List<RecentSession> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
         PageHelper.startPage(counselorHistoryDTO.getPage(), counselorHistoryDTO.getPagesize());
-        counselorHistoryDTO.setCounselorId(BaseContext.getCurrentId());
         Page<RecentSession> page = sessionsMapper.getHistory(counselorHistoryDTO);
-        return page.getResult();
+        List<RecentSession> sessions = page.getResult();
+        for (RecentSession recentSession : sessions) {
+            Long seconds = Long.parseLong(recentSession.getDuration());
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            String duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            recentSession.setDuration(duration);
+        }
+        return sessions;
     }
 
     /**
@@ -125,7 +151,7 @@ public class CounselorServiceImpl implements CounselorService {
      * @return
      */
     public CounselorSessionVO getSession(Long sessionid, Long clientid) {
-        User user = userMapper.geById(clientid);
+        User user = userMapper.getById(clientid);
         Session session = sessionsMapper.getById(sessionid);
         CounselorSessionVO counselorSessionVO = new CounselorSessionVO().builder()
                 .realName(user.getRealName())

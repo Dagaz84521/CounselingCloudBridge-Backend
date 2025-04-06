@@ -20,7 +20,7 @@ public class RecentSession implements Serializable {
 
     private String realName;
 
-    private LocalDateTime duration;
+    private String duration;
 
     private LocalDateTime startTime;
 

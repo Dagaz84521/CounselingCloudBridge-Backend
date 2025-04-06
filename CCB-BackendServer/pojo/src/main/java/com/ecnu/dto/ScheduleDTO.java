@@ -1,4 +1,4 @@
-package com.ecnu.vo;
+package com.ecnu.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,21 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecentRequest implements Serializable {
+public class ScheduleDTO implements Serializable {
 
-    private Long requestId;
+    private String dayOfWeek;
 
     private Long counselorId;
 
+    private String UserType;
+
     private String realName;
 
-    private String duration;
-
-    private LocalDateTime startTime;
+    private String avatarUrl;
 }
