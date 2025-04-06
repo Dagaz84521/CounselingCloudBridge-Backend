@@ -1,5 +1,6 @@
 package com.ecnu.controller;
 
+import com.ecnu.constant.MessageConstant;
 import com.ecnu.context.BaseContext;
 import com.ecnu.dto.ResetPasswordDTO;
 import com.ecnu.dto.UserRegisterDTO;
@@ -9,6 +10,7 @@ import com.ecnu.dto.UserLoginDTO;
 import com.ecnu.entity.User;
 import com.ecnu.result.Result;
 import com.ecnu.service.UserService;
+import com.ecnu.utils.AliOssUtil;
 import com.ecnu.utils.JwtUtil;
 import com.ecnu.vo.UserInfoVO;
 import com.ecnu.vo.UserLoginVO;
@@ -18,9 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -32,6 +37,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private AliOssUtil aliOssUtil;
 
     /**
      * 用户登录
@@ -138,6 +145,34 @@ public class UserController {
         log.info("用户登出");
         userService.logout();
         return Result.success();
+    }
+
+    /**
+     * 文件上传
+     * @param file
+     * @return
+     */
+    @PostMapping("/upload")
+    @ApiOperation("文件上传")
+    public Result<String> upload(MultipartFile file){
+        log.info("文件上传：{}",file);
+
+        try {
+            //原始文件名
+            String originalFilename = file.getOriginalFilename();
+            //截取原始文件名的后缀   dfdfdf.png
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            //构造新文件名称
+            String objectName = UUID.randomUUID().toString() + extension;
+
+            //文件的请求路径
+            String filePath = aliOssUtil.upload(file.getBytes(), objectName);
+            return Result.success(filePath);
+        } catch (IOException e) {
+            log.error("文件上传失败：{}", e);
+        }
+
+        return Result.error(MessageConstant.UPLOAD_FAILED);
     }
 
 }

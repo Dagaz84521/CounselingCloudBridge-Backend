@@ -51,3 +51,8 @@ ccb:
     sdkAppId:
     signName:
     templateId:
+  alioss:
+    endpoint: ${ccb.alioss.endpoint}
+    access-key-id: ${ccb.alioss.access-key-id}
+    access-key-secret: ${ccb.alioss.access-key-secret}
+    bucket-name: ${ccb.alioss.bucket-name}

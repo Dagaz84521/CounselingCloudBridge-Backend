@@ -37,20 +37,24 @@ public class SupervisorServiceImpl implements SupervisorService {
     public SupervisorInfo getSupervisorInfo() {
         User user = userMapper.getById(BaseContext.getCurrentId());
         SupervisorTodayRequestDTO supervisorTodayRequestDTO = requestMapper.getSupervisorTodayRequest(BaseContext.getCurrentId(), RequestStatusConstant.COMPLETED);
-        Long seconds = supervisorTodayRequestDTO.getTodayHours();
+        long todayRequests = 0;
         String todayHours = "00:00:00";
-        if(seconds != null) {
-            Long hours = seconds / 3600;
-            Long remainder = seconds % 3600;
-            Long minutes = remainder / 60;
-            seconds = remainder % 60;
-            todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        if(supervisorTodayRequestDTO != null) {
+            todayRequests = supervisorTodayRequestDTO.getTodayRequests();
+            Long seconds = supervisorTodayRequestDTO.getTodayHours();
+            if(seconds != null) {
+                Long hours = seconds / 3600;
+                Long remainder = seconds % 3600;
+                Long minutes = remainder / 60;
+                seconds = remainder % 60;
+                todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            }
         }
         SupervisorInfo supervisorInfo = new SupervisorInfo().builder()
                 .realName(user.getRealName())
                 .avatarUrl(user.getAvatarUrl())
                 .totalRequests(requestMapper.getTotalRequests(BaseContext.getCurrentId(), RequestStatusConstant.COMPLETED))
-                .todayRequests(supervisorTodayRequestDTO.getTodayRequests())
+                .todayRequests(todayRequests)
                 .todayHours(todayHours)
                 .build();
         return supervisorInfo;

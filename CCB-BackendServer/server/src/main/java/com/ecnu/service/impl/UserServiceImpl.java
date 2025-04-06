@@ -48,10 +48,6 @@ public class UserServiceImpl implements UserService {
         if(user.getStatus().equals(CommonStatusConstant.BANNED)) {
             throw new AccountBannedException(MessageConstant.ACCOUNT_BANNED);
         }
-        //账号未激活
-        if(user.getStatus().equals(CommonStatusConstant.INACTIVE)) {
-            throw new AccountInactivedException(MessageConstant.ACCOUNT_INACTIVED);
-        }
 
         return user;
     }
@@ -70,7 +66,7 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userRegisterDTO, user);
 
         user.setUserType(UserTypeConstant.CLIENT);
-        user.setStatus(CommonStatusConstant.ACTIVE);
+        user.setStatus(CommonStatusConstant.INACTIVE);
 
         userMapper.register(user);
     }

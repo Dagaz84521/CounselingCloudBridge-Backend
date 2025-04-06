@@ -37,9 +37,9 @@ public class AdminController {
 
     @GetMapping("/onlinesupervisor")
     @ApiOperation(value = "在线督导")
-    public Result<List<OnlineCounselor>> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
-        List<OnlineCounselor> onlineCounselorList = adminService.getOnlineCounselor(onlineCounselorDTO);
-        return Result.success(onlineCounselorList);
+    public Result<List<OnlineSupervisor>> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
+        List<OnlineSupervisor> onlineSupervisorList = adminService.getOnlineSupervisor(onlineCounselorDTO);
+        return Result.success(onlineSupervisorList);
     }
 
     @GetMapping("/schedule")

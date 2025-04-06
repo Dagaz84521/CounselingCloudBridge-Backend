@@ -1,13 +1,12 @@
 package com.ecnu.service.impl;
 
-import com.ecnu.constant.RequestStatusConstant;
-import com.ecnu.constant.SessionStatusConstant;
-import com.ecnu.constant.UserTypeConstant;
+import com.ecnu.constant.*;
 import com.ecnu.context.BaseContext;
 import com.ecnu.dto.*;
 import com.ecnu.entity.Counselor;
 import com.ecnu.entity.CounselorSupervisorRelation;
 import com.ecnu.entity.User;
+import com.ecnu.exception.AccountHasExistedException;
 import com.ecnu.mapper.*;
 import com.ecnu.service.AdminService;
 import com.ecnu.vo.*;
@@ -157,6 +156,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public void addCounselor(AdminAddCounselorDTO adminAddCounselorDTO) {
+        if(userMapper.getByPhoneNumber(adminAddCounselorDTO.getPhoneNumber()) != null) {
+            throw new AccountHasExistedException(MessageConstant.ACCOUNT_HAS_EXISTED);
+        }
         userMapper.register(new User().builder()
                 .age(adminAddCounselorDTO.getAge())
                 .avatarUrl(adminAddCounselorDTO.getAvatarUrl())
@@ -165,6 +167,7 @@ public class AdminServiceImpl implements AdminService {
                 .phoneNumber(adminAddCounselorDTO.getPhoneNumber())
                 .passwordHash("E10ADC3949BA59ABBE56E057F20F883E")
                 .userType(UserTypeConstant.COUNSELOR)
+                .status(CommonStatusConstant.INACTIVE)
                 .build());
         Long counselorId = userMapper.getByPhoneNumber(adminAddCounselorDTO.getPhoneNumber()).getUserId();
         counselorMapper.insert(new Counselor().builder()
@@ -209,6 +212,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public void addSupervisor(AdminAddSupervisorDTO adminAddSupervisorDTO) {
+        if(userMapper.getByPhoneNumber(adminAddSupervisorDTO.getPhoneNumber()) != null) {
+            throw new AccountHasExistedException(MessageConstant.ACCOUNT_HAS_EXISTED);
+        }
         userMapper.register(new User().builder()
                 .age(adminAddSupervisorDTO.getAge())
                 .avatarUrl(adminAddSupervisorDTO.getAvatarUrl())
@@ -217,12 +223,19 @@ public class AdminServiceImpl implements AdminService {
                 .phoneNumber(adminAddSupervisorDTO.getPhoneNumber())
                 .passwordHash("E10ADC3949BA59ABBE56E057F20F883E")
                 .userType(UserTypeConstant.SUPERVISOR)
+                .status(CommonStatusConstant.INACTIVE)
                 .build());
     }
 
     public List<SupervisorListVO> supervisorList() {
         List<SupervisorListVO> supervisorList = userMapper.supervisorList();
         return supervisorList;
+    }
+
+    public List<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
+        PageHelper.startPage(onlineCounselorDTO.getPage(), onlineCounselorDTO.getPagesize());
+        Page<OnlineSupervisor> page = userMapper.getOnlineSupervisor(onlineCounselorDTO);
+        return page.getResult();
     }
 
 }
