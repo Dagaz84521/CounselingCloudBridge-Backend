@@ -66,4 +66,8 @@ public interface UserMapper {
     void logout(Long currentId);
 
     Page<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO);
+
+    @Update("update users set real_name = #{realName} where user_id = #{supervisorId}")
+    @AutoFill(OperationType.UPDATE)
+    void updateSupervisor(Long supervisorId, String realName);
 }
