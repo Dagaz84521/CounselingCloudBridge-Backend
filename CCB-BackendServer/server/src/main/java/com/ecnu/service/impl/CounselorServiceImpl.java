@@ -45,20 +45,23 @@ public class CounselorServiceImpl implements CounselorService {
         User user = userMapper.getById(BaseContext.getCurrentId());
         Counselor counselor = counselorMapper.getById(BaseContext.getCurrentId());
         CounselorTodaySessionDTO counselorTodaySessionDTO = sessionsMapper.getCounselorTodaySession(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED);
-        Long seconds = counselorTodaySessionDTO.getTodayHours();
+        long todaySessions = 0;
         String todayHours = "00:00:00";
-        if(seconds != null) {
-            Long hours = seconds / 3600;
-            Long remainder = seconds % 3600;
-            Long minutes = remainder / 60;
-            seconds = remainder % 60;
-            todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        if(counselorTodaySessionDTO != null) {
+            Long seconds = counselorTodaySessionDTO.getTodayHours();
+            if (seconds != null) {
+                Long hours = seconds / 3600;
+                Long remainder = seconds % 3600;
+                Long minutes = remainder / 60;
+                seconds = remainder % 60;
+                todayHours = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            }
         }
         CounselorInfo counselorInfo = new CounselorInfo().builder()
                 .realName(user.getRealName())
                 .avatarUrl(user.getAvatarUrl())
                 .totalSessions(sessionsMapper.getTotalSessions(BaseContext.getCurrentId(), SessionStatusConstant.CLOSED))
-                .todaySessions(counselorTodaySessionDTO.getTodaySessions())
+                .todaySessions(todaySessions)
                 .todayHours(todayHours)
                 .currentSessions(counselor.getCurrentSessions())
                 .build();
