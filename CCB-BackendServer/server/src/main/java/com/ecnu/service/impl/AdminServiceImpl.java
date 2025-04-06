@@ -203,11 +203,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public void updateSupervisor(AdminUpdateSupervisorDTO adminUpdateSupervisorDTO) {
-        userMapper.updateCounselor(adminUpdateSupervisorDTO.getSupervisorId(), adminUpdateSupervisorDTO.getRealName());
-        scheduleMapper.deleteCounselorSchedule(adminUpdateSupervisorDTO.getSupervisorId());
+        userMapper.updateSupervisor(adminUpdateSupervisorDTO.getSupervisorId(), adminUpdateSupervisorDTO.getRealName());
+        scheduleMapper.deleteSupervisorSchedule(adminUpdateSupervisorDTO.getSupervisorId());
         List<String> schedule = adminUpdateSupervisorDTO.getSchedule();
         for (String day : schedule) {
-            scheduleMapper.insertCounselorSchedule(adminUpdateSupervisorDTO.getSupervisorId(), day);
+            scheduleMapper.insertSupervisorSchedule(adminUpdateSupervisorDTO.getSupervisorId(), day);
         }
     }
 
