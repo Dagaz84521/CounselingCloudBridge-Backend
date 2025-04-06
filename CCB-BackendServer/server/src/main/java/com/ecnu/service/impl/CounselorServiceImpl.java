@@ -121,7 +121,7 @@ public class CounselorServiceImpl implements CounselorService {
 
     @Override
     public void decrementCurrentSessions(Long counselorId) {
-        counselorMapper.updateCurrentSessions(counselorId, 1);
+        counselorMapper.updateCurrentSessions(counselorId, -1);
     }
 
     @Override
