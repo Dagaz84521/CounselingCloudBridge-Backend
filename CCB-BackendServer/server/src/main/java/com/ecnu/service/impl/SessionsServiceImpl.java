@@ -1,5 +1,7 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.constant.SessionRecordConstant;
+import com.ecnu.constant.SessionStatusConstant;
 import com.ecnu.entity.Counselor;
 import com.ecnu.entity.Session;
 import com.ecnu.entity.User;
@@ -14,7 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class SessionsServiceImpl implements SessionsService {
@@ -49,6 +54,16 @@ public class SessionsServiceImpl implements SessionsService {
      */
     @Transactional
     public Session startSession(Long clientId, Long counselorId) {
+        Session existSession = sessionMapper.getByParticipantIds(clientId, counselorId);
+
+        if (existSession != null) {
+            if (existSession.getStatus().equals(SessionStatusConstant.CLOSED)) {
+                existSession.setStatus(SessionStatusConstant.PENDING);
+            }
+            sessionMapper.updateSessionStatus(existSession);
+            return existSession;
+        }
+
         Counselor counselor = counselorService.getById(counselorId);
         if (counselor.getCurrentSessions() >= counselor.getMaxSessions()) {
             throw new CounselorBusyException("咨询师会话已满");
@@ -56,8 +71,8 @@ public class SessionsServiceImpl implements SessionsService {
         Session session = Session.builder()
                 .clientId(clientId)
                 .counselorId(counselorId)
-                .status("pending")
-                .startTime(LocalDateTime.now()) // 默认5分钟后开始
+                .status(SessionStatusConstant.PENDING)
+                .startTime(LocalDateTime.now())
                 .build();
 
         sessionMapper.insertSession(session);
@@ -68,23 +83,31 @@ public class SessionsServiceImpl implements SessionsService {
      * 结束会话
      */
     @Transactional
-    public void endSession(Long sessionId) {
+    public void endSession(Long sessionId, Integer rating) {
         Session session = sessionsMapper.getById(sessionId);
 
         if (session == null) {
             throw new IllegalSessionOperationException("非法SessionID");
         }
 
-        if ("closed".equals(session.getStatus())) {
+        if (SessionStatusConstant.CLOSED.equals(session.getStatus())) {
             throw new IllegalSessionOperationException("会话已结束");
         }
-        session.setStatus("closed");
+        session.setStatus(SessionStatusConstant.CLOSED);
+        session.setRating(rating);
         session.setEndTime(LocalDateTime.now());
         sessionMapper.updateSessionStatus(session);
 
         counselorService.decrementCurrentSessions(session.getCounselorId());
     }
 
+    public List<Long> getRelatedSession(Long userId) {
+        List<Session> sessions = sessionMapper.getByParticipantId(userId);
+        return sessions.stream()
+                .filter(Objects::nonNull)
+                .map(Session::getSessionId)
+                .collect(Collectors.toList());
+    }
     private boolean isParticipant(Session session, Long userId) {
         return userId.equals(session.getClientId()) || userId.equals(session.getCounselorId());
     }

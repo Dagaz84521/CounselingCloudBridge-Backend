@@ -54,7 +54,7 @@ public interface SessionsMapper {
     @Select("SELECT * FROM sessions WHERE session_id = #{sessionId}")
     Session getById(@Param("sessionId") Long sessionId);
 
-    @Update("UPDATE sessions SET status = #{status}, end_time = #{endTime} WHERE session_id = #{sessionId}")
+    @Update("UPDATE sessions SET status = #{status}, end_time = #{endTime}, rating = #{rating} WHERE session_id = #{sessionId}")
     int updateSessionStatus(Session session);
 
     @Select("SELECT * FROM sessions WHERE client_id = #{userId} OR counselor_id = #{userId} ORDER BY start_time DESC")
@@ -88,4 +88,10 @@ public interface SessionsMapper {
 
     @Select("select sum(timestampdiff(second, start_time, end_time)) from sessions where counselor_id = #{counselorId} and status = #{status}")
     Long getTotalHours(Long counselorId, String status);
+
+    @Select("SELECT * FROM sessions WHERE client_id = #{clientId} AND counselor_id = #{counselorId}")
+    Session getByParticipantIds(Long clineId, Long counselorId);
+
+    @Select("SELECT * FROM sessions WHERE client_id = #{userId} OR counselor_id = #{userId}")
+    List<Session>  getByParticipantId(Long userId);
 }
