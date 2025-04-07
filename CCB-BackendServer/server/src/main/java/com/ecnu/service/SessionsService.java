@@ -3,6 +3,8 @@ package com.ecnu.service;
 import com.ecnu.entity.Session;
 import com.ecnu.entity.User;
 
+import java.util.List;
+
 public interface SessionsService {
 
     /**
@@ -14,10 +16,12 @@ public interface SessionsService {
      * 创建新会话（带并发控制）
      * @return 新创建好的会话
      */
-    Session createSession(Long clientId, Long counselorId);
+    Session startSession(Long clientId, Long counselorId);
     /**
      * 结束会话
      */
-    void endSession(Long sessionId, User operator);
+    void endSession(Long sessionId, Integer rating);
+
+    List<Long> getRelatedSession(Long userId);
 
 }

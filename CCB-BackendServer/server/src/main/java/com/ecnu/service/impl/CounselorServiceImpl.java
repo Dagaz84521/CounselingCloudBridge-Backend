@@ -13,6 +13,7 @@ import com.ecnu.mapper.ScheduleMapper;
 import com.ecnu.mapper.SessionsMapper;
 import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.CounselorService;
+import com.ecnu.vo.CounselorDetailVO;
 import com.ecnu.vo.CounselorInfo;
 import com.ecnu.vo.CounselorSessionVO;
 import com.ecnu.vo.RecentSession;
@@ -120,7 +121,7 @@ public class CounselorServiceImpl implements CounselorService {
 
     @Override
     public void decrementCurrentSessions(Long counselorId) {
-        counselorMapper.updateCurrentSessions(counselorId, 1);
+        counselorMapper.updateCurrentSessions(counselorId, -1);
     }
 
     @Override
@@ -172,5 +173,20 @@ public class CounselorServiceImpl implements CounselorService {
      */
     public void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid) {
         sessionsMapper.addSessionAdvice(sessionAddAdviceDTO, sessionid);
+    }
+
+    @Override
+    public CounselorDetailVO getCounselorDetailById(Long counselorId) {
+        Counselor counselor = counselorMapper.getById(counselorId);
+        User user = userMapper.getById(counselorId);
+        return CounselorDetailVO.builder()
+                .name(user.getRealName())
+                .expertise(counselor.getExpertise())
+                .certification(counselor.getCertification())
+                .rating(counselor.getRating())
+                .totalSessions(counselor.getTotalSessions())
+                .yearsExperience(counselor.getYearsExperience())
+                .bio(counselor.getBio())
+                .build();
     }
 }

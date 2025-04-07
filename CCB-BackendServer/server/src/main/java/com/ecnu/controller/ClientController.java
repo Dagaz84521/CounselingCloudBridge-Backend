@@ -1,18 +1,18 @@
 package com.ecnu.controller;
 
 import com.ecnu.dto.ClientCounselorDTO;
+import com.ecnu.entity.Session;
 import com.ecnu.result.Result;
 import com.ecnu.service.ClientService;
+import com.ecnu.service.SessionsService;
 import com.ecnu.vo.ClientHomeVO;
 import com.ecnu.vo.ClientSessionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jdk.jpackage.internal.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +24,9 @@ public class ClientController {
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private SessionsService sessionsService;
 
     @GetMapping("/home")
     @ApiOperation(value = "客户首页")
@@ -50,6 +53,7 @@ public class ClientController {
         return Result.success(counselorList);
     }
 
+
     @GetMapping("/session")
     @ApiOperation(value = "客户咨询页面")
     public Result<ClientSessionVO> getSession() {
@@ -61,4 +65,49 @@ public class ClientController {
     }
 
 
+    /**
+     * 客户开始一个新的咨询
+     * @param
+     * @return
+     */
+    @PostMapping("/session/add")
+    @ApiOperation(value = "查看咨询师排班页面")
+    public Result<Long> startSession(
+            @RequestParam("clientId") Long clientId,
+            @RequestParam("counselorId") Long counselorId) {
+        log.info("客户开始一个新的咨询");
+        Session session = sessionsService.startSession(clientId, counselorId);
+        return Result.success(session.getSessionId());
+    }
+
+
+    /**
+     * 客户结束一个新的咨询
+     * @param
+     * @return
+     */
+    @PostMapping("/session/end")
+    @ApiOperation(value = "查看咨询师排班页面")
+    public Result<Long> endSession(
+            @RequestParam("sessionId") Long sessionId,
+            @RequestParam("rating") Integer rating) {
+        log.info("客户结束一个新的咨询");
+        sessionsService.endSession(sessionId,rating);
+
+        return Result.success();
+    }
+
+    /**
+     * 客户结束一个新的咨询
+     * @param
+     * @return
+     */
+    @PostMapping("/session/get")
+    @ApiOperation(value = "查看咨询师排班页面")
+    public Result<List<Long>> getRelatedSessions(
+            @RequestParam("userId") Long userId) {
+        log.info("客户 {} 获取会话", userId);
+        List<Long> sessionIds = sessionsService.getRelatedSession(userId);
+        return Result.success(sessionIds);
+    }
 }

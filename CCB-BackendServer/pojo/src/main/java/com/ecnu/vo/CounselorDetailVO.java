@@ -11,17 +11,19 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientHomeVO implements Serializable {
+public class CounselorDetailVO implements Serializable {
 
-    private Long counselorId;
-
-    private String realName;
-
-    private String avatarUrl;
+    private String name;
 
     private String expertise;
 
+    private String certification;
+
     private Float rating;
 
-    private Boolean isFree;
+    private Integer totalSessions;
+
+    private Integer yearsExperience;
+
+    private String bio;
 }
