@@ -4,6 +4,7 @@ import com.ecnu.dto.ClientCounselorDTO;
 import com.ecnu.result.Result;
 import com.ecnu.service.ClientService;
 import com.ecnu.vo.ClientHomeVO;
+import com.ecnu.vo.ClientSessionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,16 @@ public class ClientController {
         List<ClientHomeVO> counselorList = clientService.getCounselorScheduled(clientCounselorDTO);
 
         return Result.success(counselorList);
+    }
+
+    @GetMapping("/session")
+    @ApiOperation(value = "客户咨询页面")
+    public Result<ClientSessionVO> getSession() {
+        log.info("客户咨询页面");
+
+        ClientSessionVO clientSessionVO = clientService.getSession();
+
+        return Result.success();
     }
 
 

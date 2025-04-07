@@ -2,6 +2,7 @@ package com.ecnu.service;
 
 import com.ecnu.dto.ClientCounselorDTO;
 import com.ecnu.vo.ClientHomeVO;
+import com.ecnu.vo.ClientSessionVO;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface ClientService {
      * @return
      */
     List<ClientHomeVO> getCounselorScheduled(ClientCounselorDTO clientCounselorDTO);
+
+    ClientSessionVO getSession();
 }
