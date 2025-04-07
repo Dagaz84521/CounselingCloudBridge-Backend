@@ -8,6 +8,7 @@ import com.ecnu.service.SessionsService;
 import com.ecnu.vo.ClientHomeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jdk.jpackage.internal.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -74,9 +75,25 @@ public class ClientController {
     @PostMapping("/session/end")
     @ApiOperation(value = "查看咨询师排班页面")
     public Result<Long> endSession(
-            @RequestParam("sessionId") Long sessionId) {
+            @RequestParam("sessionId") Long sessionId,
+            @RequestParam("rating") Integer rating) {
         log.info("客户结束一个新的咨询");
-        sessionsService.endSession(sessionId);
+        sessionsService.endSession(sessionId,rating);
+
         return Result.success();
+    }
+
+    /**
+     * 客户结束一个新的咨询
+     * @param
+     * @return
+     */
+    @PostMapping("/session/get")
+    @ApiOperation(value = "查看咨询师排班页面")
+    public Result<List<Long>> getRelatedSessions(
+            @RequestParam("userId") Long userId) {
+        log.info("客户 {} 获取会话", userId);
+        List<Long> sessionIds = sessionsService.getRelatedSession(userId);
+        return Result.success(sessionIds);
     }
 }

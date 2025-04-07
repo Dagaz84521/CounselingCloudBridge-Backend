@@ -3,6 +3,8 @@ package com.ecnu.service;
 import com.ecnu.entity.Session;
 import com.ecnu.entity.User;
 
+import java.util.List;
+
 public interface SessionsService {
 
     /**
@@ -18,6 +20,8 @@ public interface SessionsService {
     /**
      * 结束会话
      */
-    void endSession(Long sessionId);
+    void endSession(Long sessionId, Integer rating);
+
+    List<Long> getRelatedSession(Long userId);
 
 }
