@@ -11,6 +11,7 @@ import com.ecnu.service.CounselorService;
 import com.ecnu.service.SessionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,26 +58,25 @@ public class SessionsServiceImpl implements SessionsService {
         Session existSession = sessionMapper.getByParticipantIds(clientId, counselorId);
 
         if (existSession != null) {
-            if (existSession.getStatus().equals(SessionStatusConstant.CLOSED)) {
-                existSession.setStatus(SessionStatusConstant.PENDING);
-            }
-            sessionMapper.updateSessionStatus(existSession);
             return existSession;
         }
 
         Counselor counselor = counselorService.getById(counselorId);
-        if (counselor.getCurrentSessions() >= counselor.getMaxSessions()) {
-            throw new CounselorBusyException("咨询师会话已满");
-        }
+
         Session session = Session.builder()
                 .clientId(clientId)
                 .counselorId(counselorId)
-                .status(SessionStatusConstant.PENDING)
                 .startTime(LocalDateTime.now())
                 .build();
 
+        if (counselor.getCurrentSessions() >= counselor.getMaxSessions()) {
+            session.setStatus(SessionStatusConstant.PENDING);
+        } else {
+            session.setStatus(SessionStatusConstant.ACTIVE);
+            counselorService.incrementCurrentSessions(counselorId);
+        }
+
         sessionMapper.insertSession(session);
-        counselorService.incrementCurrentSessions(counselorId);
         return session;
     }
     /**
@@ -98,7 +98,21 @@ public class SessionsServiceImpl implements SessionsService {
         session.setEndTime(LocalDateTime.now());
         sessionMapper.updateSessionStatus(session);
 
-        counselorService.decrementCurrentSessions(session.getCounselorId());
+        Long counselorId = session.getCounselorId();
+        Counselor counselor = counselorService.getById(counselorId);
+
+
+        if (Objects.equals(counselor.getCurrentSessions(), counselor.getMaxSessions())) {
+            Session earliestSession = sessionMapper.getEarliestPendingSession(counselorId);
+            if (earliestSession == null) {
+                counselorService.decrementCurrentSessions(counselorId);
+                return;
+            }
+            earliestSession.setStatus(SessionStatusConstant.ACTIVE);
+            sessionMapper.updateSessionStatus(session);
+        } else {
+            counselorService.decrementCurrentSessions(counselorId);
+        }
     }
 
     public List<Long> getRelatedSession(Long userId) {
