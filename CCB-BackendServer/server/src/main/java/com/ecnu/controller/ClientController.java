@@ -6,6 +6,7 @@ import com.ecnu.result.Result;
 import com.ecnu.service.ClientService;
 import com.ecnu.service.SessionsService;
 import com.ecnu.vo.ClientHomeVO;
+import com.ecnu.vo.ClientSessionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jdk.jpackage.internal.Log;
@@ -52,6 +53,18 @@ public class ClientController {
         return Result.success(counselorList);
     }
 
+
+    @GetMapping("/session")
+    @ApiOperation(value = "客户咨询页面")
+    public Result<ClientSessionVO> getSession() {
+        log.info("客户咨询页面");
+
+        ClientSessionVO clientSessionVO = clientService.getSession();
+
+        return Result.success();
+    }
+
+
     /**
      * 客户开始一个新的咨询
      * @param
@@ -66,6 +79,7 @@ public class ClientController {
         Session session = sessionsService.startSession(clientId, counselorId);
         return Result.success(session.getSessionId());
     }
+
 
     /**
      * 客户结束一个新的咨询

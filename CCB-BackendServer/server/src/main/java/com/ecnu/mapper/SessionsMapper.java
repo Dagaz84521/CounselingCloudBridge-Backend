@@ -3,6 +3,7 @@ package com.ecnu.mapper;
 
 import com.ecnu.dto.*;
 import com.ecnu.entity.Session;
+import com.ecnu.vo.ClientSessionVO;
 import com.ecnu.vo.RecentSession;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
@@ -89,9 +90,14 @@ public interface SessionsMapper {
     @Select("select sum(timestampdiff(second, start_time, end_time)) from sessions where counselor_id = #{counselorId} and status = #{status}")
     Long getTotalHours(Long counselorId, String status);
 
+
+    @Select("select s.counselor_id, u.real_name, u.avatar_url, s.session_id from sessions s join users u on s.counselor_id = u.user_id where s.client_id = #{clientId} and s.status = 'active'")
+    ClientSessionVO getClientSession(Long clientId);
+
     @Select("SELECT * FROM sessions WHERE client_id = #{clientId} AND counselor_id = #{counselorId}")
     Session getByParticipantIds(Long clineId, Long counselorId);
 
     @Select("SELECT * FROM sessions WHERE client_id = #{userId} OR counselor_id = #{userId}")
     List<Session>  getByParticipantId(Long userId);
+
 }

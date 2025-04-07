@@ -31,6 +31,6 @@ public interface ScheduleMapper {
     @Delete("delete from schedule where counselor_id = #{supervisorId}")
     void deleteSupervisorSchedule(Long supervisorId);
 
-    @Insert("insert into schedule(day_of_week, supervisor_id) values(#{day}, #{supervisorId})")
+    @Insert("insert into schedule(day_of_week, counselor_id) values(#{day}, #{supervisorId})")
     void insertSupervisorSchedule(Long supervisorId, String day);
 }
