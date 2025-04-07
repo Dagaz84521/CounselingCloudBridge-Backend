@@ -9,7 +9,6 @@ import com.ecnu.vo.ClientHomeVO;
 import com.ecnu.vo.ClientSessionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import jdk.jpackage.internal.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +70,7 @@ public class ClientController {
      * @return
      */
     @PostMapping("/session/add")
-    @ApiOperation(value = "查看咨询师排班页面")
+    @ApiOperation(value = "客户开始会话")
     public Result<Long> startSession(
             @RequestParam("clientId") Long clientId,
             @RequestParam("counselorId") Long counselorId) {
@@ -87,7 +86,7 @@ public class ClientController {
      * @return
      */
     @PostMapping("/session/end")
-    @ApiOperation(value = "查看咨询师排班页面")
+    @ApiOperation(value = "客户结束会话")
     public Result<Long> endSession(
             @RequestParam("sessionId") Long sessionId,
             @RequestParam("rating") Integer rating) {
