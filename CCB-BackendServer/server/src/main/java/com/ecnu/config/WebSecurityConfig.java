@@ -21,7 +21,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
                         "/chat/**",          // WebSocket端点
                         "/favicon.ico",      // 图标
                         "/error",            // 错误页面
-                        "/api/**"
+                        "/api/**",
+                        "/doc.html"
                 ).permitAll()           // 允许匿名访问
                 .anyRequest().authenticated()  // 其他请求需要认证
                 .and()

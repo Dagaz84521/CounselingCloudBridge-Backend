@@ -1,9 +1,11 @@
 package com.ecnu.controller;
 
+import com.ecnu.constant.PageConstant;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.result.Result;
 import com.ecnu.service.CounselorService;
+import com.ecnu.service.SessionRecordService;
 import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +25,8 @@ public class CounselorController {
     @Autowired
     private CounselorService counselorService;
 
+    @Autowired
+    private SessionRecordService sessionRecordService;
 
     /**
      * 咨询师首页
@@ -65,8 +69,10 @@ public class CounselorController {
      */
     @GetMapping("/session/{sessionid}/{clientid}")
     @ApiOperation(value = "咨询师咨询页面")
-    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
+    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid, @RequestParam Long page) {
         CounselorSessionVO counselorSessionVO = counselorService.getSession(sessionid, clientid);
+        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionid, page, PageConstant.RECORD_HISTORY_PER_PAGE);
+        counselorSessionVO.setHistory(records);
         return Result.success(counselorSessionVO);
     }
 
