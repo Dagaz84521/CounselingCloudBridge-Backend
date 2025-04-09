@@ -23,7 +23,7 @@ public interface SessionRecordMapper {
             "ORDER BY created_at DESC",
             "LIMIT #{size} OFFSET #{offset}"
     })
-    List<SessionRecord> selectBySessionId(@Param("sessionId") Long sessionId, @Param("offset") int offset, @Param("size") int size);
+    List<SessionRecord> selectBySessionId(@Param("sessionId") Long sessionId, @Param("offset") Long offset, @Param("size") Long size);
 
 
     @Update({
