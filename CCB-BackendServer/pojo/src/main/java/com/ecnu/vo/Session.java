@@ -15,7 +15,7 @@ public class Session implements Serializable {
 
     private Long sessionId;
 
-    private Long clienId;
+    private Long clientId;
 
     private String realName;
 }
