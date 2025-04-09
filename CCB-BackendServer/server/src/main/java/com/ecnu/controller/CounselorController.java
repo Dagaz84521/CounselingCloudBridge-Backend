@@ -83,9 +83,9 @@ public class CounselorController {
      */
     @PutMapping("/session")
     @ApiOperation(value = "咨询师添加咨询评价")
-    public Result addSessionAdvice(@RequestBody SessionAddAdviceDTO sessionAddAdviceDTO, @PathVariable Long sessionid) {
+    public Result addSessionAdvice(@RequestBody SessionAddAdviceDTO sessionAddAdviceDTO) {
         log.info("咨询师添加咨询评价:{}", sessionAddAdviceDTO);
-        counselorService.addSessionAdvice(sessionAddAdviceDTO, sessionid);
+        counselorService.addSessionAdvice(sessionAddAdviceDTO);
         return Result.success();
     }
 

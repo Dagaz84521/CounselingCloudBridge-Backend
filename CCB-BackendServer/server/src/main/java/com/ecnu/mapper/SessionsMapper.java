@@ -76,10 +76,9 @@ public interface SessionsMapper {
     /**
      * 添加咨询评价
      * @param sessionAddAdviceDTO
-     * @param sessionId
      */
-    @Update("UPDATE sessions SET advice = #{advice}, type = #{type} WHERE session_id = #{sessionId}")
-    void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionId);
+    @Update("UPDATE sessions SET advice = #{advice}, type = #{type} WHERE session_id = #{sessionid}")
+    void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO);
 
     @Select("select count(*) as todaySessions, sum(timestampdiff(second, start_time, end_time)) as todayHours from sessions where status = #{status} and date(start_time) = curdate()")
     AdminTodaySessionDTO getTodaySession(String status);
