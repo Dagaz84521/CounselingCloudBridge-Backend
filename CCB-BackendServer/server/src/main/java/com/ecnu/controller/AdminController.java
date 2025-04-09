@@ -59,9 +59,9 @@ public class AdminController {
 
     @GetMapping("/counselor")
     @ApiOperation(value = "咨询师管理页面")
-    public Result<List<AdminCounselorVO>> getCounselorList(AdminCounselorDTO adminCounselorDTO) {
-        List<AdminCounselorVO> counselorList = adminService.getCounselorList(adminCounselorDTO);
-        return Result.success(counselorList);
+    public Result<AdminCounselorPageVO> getCounselorList(AdminCounselorDTO adminCounselorDTO) {
+        AdminCounselorPageVO adminCounselorPageVO = adminService.getCounselorList(adminCounselorDTO);
+        return Result.success(adminCounselorPageVO);
     }
 
     @PutMapping("/counselor")
@@ -80,9 +80,9 @@ public class AdminController {
 
     @GetMapping("/supervisor")
     @ApiOperation(value = "督导管理页面")
-    public Result<List<AdminSupervisorVO>> getSupervisorList(AdminCounselorDTO adminCounselorDTO) {
-        List<AdminSupervisorVO> supervisorList = adminService.getSupervisorList(adminCounselorDTO);
-        return Result.success(supervisorList);
+    public Result<AdminSupervisorPageVO> getSupervisorList(AdminCounselorDTO adminCounselorDTO) {
+        AdminSupervisorPageVO adminSupervisorPageVO = adminService.getSupervisorList(adminCounselorDTO);
+        return Result.success(adminSupervisorPageVO);
     }
 
     @PutMapping("/supervisor")
@@ -104,6 +104,13 @@ public class AdminController {
     public Result<List<SupervisorListVO>> getSupervisorList() {
         List<SupervisorListVO> supervisorList = adminService.supervisorList();
         return Result.success(supervisorList);
+    }
+
+    @GetMapping("/history")
+    @ApiOperation(value = "管理员查询咨询师历史记录")
+    public Result<CounselorHistoryVO> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+        CounselorHistoryVO counselorHistoryVO = adminService.getHistory(counselorHistoryDTO);
+        return Result.success(counselorHistoryVO);
     }
 
 }

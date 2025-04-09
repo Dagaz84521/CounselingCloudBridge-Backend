@@ -55,7 +55,7 @@ public interface CounselorService {
      * 获取Id对应的咨询师的历史记录
      * @return
      */
-    List<RecentSession> getHistory(CounselorHistoryDTO counselorHistoryDTO);
+    CounselorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO);
 
     /**
      * 获取Id对应的客户的当前会话信息

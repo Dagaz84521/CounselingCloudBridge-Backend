@@ -15,13 +15,13 @@ public interface AdminService {
 
     ScheduleOfDayVO getScheduleOfDay(String day);
 
-    List<AdminCounselorVO> getCounselorList(AdminCounselorDTO adminCounselorDTO);
+    AdminCounselorPageVO getCounselorList(AdminCounselorDTO adminCounselorDTO);
 
     void updateCounselor(AdminUpdateCounselorDTO adminUpdateCounselorDTO);
 
     void addCounselor(AdminAddCounselorDTO adminAddCounselorDTO);
 
-    List<AdminSupervisorVO> getSupervisorList(AdminCounselorDTO adminCounselorDTO);
+    AdminSupervisorPageVO getSupervisorList(AdminCounselorDTO adminCounselorDTO);
 
     void updateSupervisor(AdminUpdateSupervisorDTO adminUpdateSupervisorDTO);
 
@@ -30,4 +30,6 @@ public interface AdminService {
     List<SupervisorListVO> supervisorList();
 
     List<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO);
+
+    CounselorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO);
 }

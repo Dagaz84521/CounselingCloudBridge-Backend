@@ -5,11 +5,14 @@
     <select id="getHistory" resultType="com.ecnu.vo.RecentSession">
         select s.session_id, s.client_id, u.real_name, timestampdiff(second, s.start_time, s.end_time) as duration, s.start_time, s.rating from sessions s left outer join users u on s.client_id = u.user_id
         where s.status = 'closed'
-            <if test="name != null">
-                and u.real_name like concat('%', #{name}, '%')
+            <if test="currentId != null">
+                and s.counselor_id = #{currentId}
             </if>
-            <if test="date != null">
-                and date(start_time) = #{date}
+            <if test="counselorHistoryDTO.name != null">
+                and u.real_name like concat('%', #{counselorHistoryDTO.name}, '%')
+            </if>
+            <if test="counselorHistoryDTO.date != null">
+                and date(start_time) = #{counselorHistoryDTO.date}
             </if>
         order by start_time desc
     </select>
