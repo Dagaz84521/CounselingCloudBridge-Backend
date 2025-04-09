@@ -18,7 +18,7 @@ public interface SessionRecordMapper {
     int insert(SessionRecord record);
 
     @Select({
-            "SELECT * FROM session_record",
+            "SELECT * FROM session_records",
             "WHERE session_id = #{sessionId}",
             "ORDER BY created_at DESC",
             "LIMIT #{size} OFFSET #{offset}"
