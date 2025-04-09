@@ -16,5 +16,5 @@ public interface SessionRecordService {
      * 获取会话历史记录
      * @return List<SessionRecordVO>
      */
-    List<SessionRecordVO> getHistoryMessages(Long sessionId, int page, int size);
+    List<SessionRecordVO> getHistoryMessages(Long sessionId, Long page, Long size);
 }

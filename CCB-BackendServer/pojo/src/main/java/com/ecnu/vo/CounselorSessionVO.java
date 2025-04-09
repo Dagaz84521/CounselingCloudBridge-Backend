@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,4 +24,6 @@ public class CounselorSessionVO implements Serializable {
     private LocalDateTime startTime;
 
     private Integer rating;
+
+    private List<SessionRecordVO> history;
 }
