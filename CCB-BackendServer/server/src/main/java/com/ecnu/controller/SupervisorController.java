@@ -1,5 +1,6 @@
 package com.ecnu.controller;
 
+import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
 import com.ecnu.result.Result;
 import com.ecnu.service.SupervisorService;
@@ -46,6 +47,13 @@ public class SupervisorController {
     public Result<List<OnlineCounselor>> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
         List<OnlineCounselor> onlineCounselorList = supervisorService.getOnlineCounselor(onlineCounselorDTO);
         return Result.success(onlineCounselorList);
+    }
+
+    @GetMapping("/history")
+    @ApiOperation(value = "督导求助历史记录")
+    public Result<SupervisorHistoryVO> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+        SupervisorHistoryVO supervisorHistoryVO = supervisorService.getHistory(counselorHistoryDTO);
+        return Result.success(supervisorHistoryVO);
     }
 
 }

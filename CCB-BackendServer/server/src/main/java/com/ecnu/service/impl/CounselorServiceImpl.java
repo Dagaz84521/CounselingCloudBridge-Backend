@@ -13,10 +13,7 @@ import com.ecnu.mapper.ScheduleMapper;
 import com.ecnu.mapper.SessionsMapper;
 import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.CounselorService;
-import com.ecnu.vo.CounselorDetailVO;
-import com.ecnu.vo.CounselorInfo;
-import com.ecnu.vo.CounselorSessionVO;
-import com.ecnu.vo.RecentSession;
+import com.ecnu.vo.*;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -133,9 +130,9 @@ public class CounselorServiceImpl implements CounselorService {
      * 获取咨询师的历史会话
      * @return
      */
-    public List<RecentSession> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+    public CounselorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO) {
         PageHelper.startPage(counselorHistoryDTO.getPage(), counselorHistoryDTO.getPagesize());
-        Page<RecentSession> page = sessionsMapper.getHistory(counselorHistoryDTO);
+        Page<RecentSession> page = sessionsMapper.getHistory(counselorHistoryDTO, BaseContext.getCurrentId());
         List<RecentSession> sessions = page.getResult();
         for (RecentSession recentSession : sessions) {
             Long seconds = Long.parseLong(recentSession.getDuration());
@@ -146,7 +143,7 @@ public class CounselorServiceImpl implements CounselorService {
             String duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
             recentSession.setDuration(duration);
         }
-        return sessions;
+        return new CounselorHistoryVO(sessions, page.getTotal());
     }
 
     /**

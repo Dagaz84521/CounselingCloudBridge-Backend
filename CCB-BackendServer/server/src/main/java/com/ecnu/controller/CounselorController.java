@@ -55,10 +55,10 @@ public class CounselorController {
      */
     @GetMapping("/history")
     @ApiOperation(value = "咨询历史记录")
-    public Result<List<RecentSession>> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+    public Result<CounselorHistoryVO> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
         log.info("咨询历史记录:{}", counselorHistoryDTO);
-        List<RecentSession> sessions = counselorService.getHistory(counselorHistoryDTO);
-        return Result.success(sessions);
+        CounselorHistoryVO counselorHistoryVO = counselorService.getHistory(counselorHistoryDTO);
+        return Result.success(counselorHistoryVO);
     }
 
     /**

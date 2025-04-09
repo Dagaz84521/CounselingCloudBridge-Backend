@@ -122,7 +122,7 @@ public class AdminServiceImpl implements AdminService {
         return scheduleOfDayVO;
     }
 
-    public List<AdminCounselorVO> getCounselorList(AdminCounselorDTO adminCounselorDTO) {
+    public AdminCounselorPageVO getCounselorList(AdminCounselorDTO adminCounselorDTO) {
         PageHelper.startPage(adminCounselorDTO.getPage(), adminCounselorDTO.getPagesize());
         Page<AdminCounselorVO> page = counselorMapper.getCounselorList(adminCounselorDTO);
         List<AdminCounselorVO> counselorList = page.getResult();
@@ -142,7 +142,7 @@ public class AdminServiceImpl implements AdminService {
             adminCounselorVO.setTotalHours(todayHours);
             adminCounselorVO.setSchedule(scheduleMapper.getSchedule(adminCounselorVO.getCounselorId()));
         }
-        return counselorList;
+        return new AdminCounselorPageVO(counselorList, page.getTotal());
     }
 
     public void updateCounselor(AdminUpdateCounselorDTO adminUpdateCounselorDTO) {
@@ -181,7 +181,7 @@ public class AdminServiceImpl implements AdminService {
                 .build());
     }
 
-    public List<AdminSupervisorVO> getSupervisorList(AdminCounselorDTO adminCounselorDTO) {
+    public AdminSupervisorPageVO getSupervisorList(AdminCounselorDTO adminCounselorDTO) {
         PageHelper.startPage(adminCounselorDTO.getPage(), adminCounselorDTO.getPagesize());
         Page<AdminSupervisorVO> page = userMapper.getSupervisorList(adminCounselorDTO);
         List<AdminSupervisorVO> supervisorList = page.getResult();
@@ -199,7 +199,7 @@ public class AdminServiceImpl implements AdminService {
             adminSupervisorVO.setTotalHours(todayHours);
             adminSupervisorVO.setSchedule(scheduleMapper.getSchedule(adminSupervisorVO.getSupervisorId()));
         }
-        return supervisorList;
+        return new AdminSupervisorPageVO(supervisorList, page.getTotal());
     }
 
     public void updateSupervisor(AdminUpdateSupervisorDTO adminUpdateSupervisorDTO) {
@@ -236,6 +236,22 @@ public class AdminServiceImpl implements AdminService {
         PageHelper.startPage(onlineCounselorDTO.getPage(), onlineCounselorDTO.getPagesize());
         Page<OnlineSupervisor> page = userMapper.getOnlineSupervisor(onlineCounselorDTO);
         return page.getResult();
+    }
+
+    public CounselorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+        PageHelper.startPage(counselorHistoryDTO.getPage(), counselorHistoryDTO.getPagesize());
+        Page<RecentSession> page = sessionsMapper.getHistory(counselorHistoryDTO, null);
+        List<RecentSession> sessions = page.getResult();
+        for (RecentSession recentSession : sessions) {
+            Long seconds = Long.parseLong(recentSession.getDuration());
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            String duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            recentSession.setDuration(duration);
+        }
+        return new CounselorHistoryVO(sessions, page.getTotal());
     }
 
 }

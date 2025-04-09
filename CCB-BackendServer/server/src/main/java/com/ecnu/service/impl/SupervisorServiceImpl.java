@@ -2,16 +2,14 @@ package com.ecnu.service.impl;
 
 import com.ecnu.constant.RequestStatusConstant;
 import com.ecnu.context.BaseContext;
+import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
 import com.ecnu.dto.SupervisorTodayRequestDTO;
 import com.ecnu.entity.SupervisionRequest;
 import com.ecnu.entity.User;
 import com.ecnu.mapper.*;
 import com.ecnu.service.SupervisorService;
-import com.ecnu.vo.OnlineCounselor;
-import com.ecnu.vo.RecentRequest;
-import com.ecnu.vo.Request;
-import com.ecnu.vo.SupervisorInfo;
+import com.ecnu.vo.*;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -96,5 +94,21 @@ public class SupervisorServiceImpl implements SupervisorService {
         PageHelper.startPage(onlineCounselorDTO.getPage(), onlineCounselorDTO.getPagesize());
         Page<OnlineCounselor> page = relationMapper.getOnlineCounselor(BaseContext.getCurrentId());
         return page.getResult();
+    }
+
+    public SupervisorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+        PageHelper.startPage(counselorHistoryDTO.getPage(), counselorHistoryDTO.getPagesize());
+        Page<RecentRequest> page = requestMapper.getHistory(counselorHistoryDTO, BaseContext.getCurrentId());
+        List<RecentRequest> requests = page.getResult();
+        for (RecentRequest request : requests) {
+            Long seconds = Long.parseLong(request.getDuration());
+            Long hours = seconds / 3600;
+            Long remainder = seconds % 3600;
+            Long minutes = remainder / 60;
+            seconds = remainder % 60;
+            String duration = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            request.setDuration(duration);
+        }
+        return new SupervisorHistoryVO(requests, page.getTotal());
     }
 }

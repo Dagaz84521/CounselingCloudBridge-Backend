@@ -71,7 +71,7 @@ public interface SessionsMapper {
      * @param counselorHistoryDTO
      * @return
      */
-    Page<RecentSession> getHistory(CounselorHistoryDTO counselorHistoryDTO);
+    Page<RecentSession> getHistory(CounselorHistoryDTO counselorHistoryDTO, Long currentId);
 
     /**
      * 添加咨询评价

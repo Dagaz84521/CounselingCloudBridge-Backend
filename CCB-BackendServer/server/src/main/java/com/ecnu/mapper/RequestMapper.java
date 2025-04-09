@@ -1,8 +1,10 @@
 package com.ecnu.mapper;
 
+import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.SupervisorTodayRequestDTO;
 import com.ecnu.entity.SupervisionRequest;
 import com.ecnu.vo.RecentRequest;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -29,4 +31,6 @@ public interface RequestMapper {
 
     @Select("select sum(timestampdiff(second, start_time, end_time)) from supervision_request where supervisor_id = #{supervisorId} and status = #{status}")
     Long getTotalHours(Long supervisorId, String status);
+
+    Page<RecentRequest> getHistory(CounselorHistoryDTO counselorHistoryDTO, Long currentId);
 }

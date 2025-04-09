@@ -1,10 +1,8 @@
 package com.ecnu.service;
 
+import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
-import com.ecnu.vo.OnlineCounselor;
-import com.ecnu.vo.RecentRequest;
-import com.ecnu.vo.Request;
-import com.ecnu.vo.SupervisorInfo;
+import com.ecnu.vo.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,4 +18,6 @@ public interface SupervisorService {
     List<Request> getRequestList();
 
     List<OnlineCounselor> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO);
+
+    SupervisorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO);
 }

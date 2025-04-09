@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ecnu.mapper.RequestMapper">
+    <select id="getHistory" resultType="com.ecnu.vo.RecentRequest">
+        select r.request_id, r.counselor_id, u.real_name, timestampdiff(second, r.start_time, r.end_time) as duration, r.start_time from supervision_request r left outer join users u on r.counselor_id = u.user_id
+        where r.status = 'completed'
+            <if test="name != null">
+                and u.real_name like concat('%', #{name}, '%')
+            </if>
+            <if test="date != null">
+                and date(r.start_time) = #{date}
+            </if>
+        order by r.start_time desc
+    </select>
+</mapper>
