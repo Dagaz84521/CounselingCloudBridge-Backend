@@ -171,8 +171,8 @@ public class CounselorServiceImpl implements CounselorService {
      * 咨询师添加咨询评价
      * @param sessionAddAdviceDTO
      */
-    public void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid) {
-        sessionsMapper.addSessionAdvice(sessionAddAdviceDTO, sessionid);
+    public void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO) {
+        sessionsMapper.addSessionAdvice(sessionAddAdviceDTO);
     }
 
     @Override

@@ -68,7 +68,7 @@ public interface CounselorService {
      * 添加咨询评价
      * @param sessionAddAdviceDTO
      */
-    void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid);
+    void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO);
 
 
     /**
