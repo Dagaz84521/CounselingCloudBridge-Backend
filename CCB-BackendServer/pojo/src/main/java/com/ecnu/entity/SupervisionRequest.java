@@ -27,7 +27,7 @@ public class SupervisionRequest implements Serializable {
     private Long supervisorId;
 
     //关联的会话ID
-    private Long sessionId;
+    private Long relationId;
 
     //开始时间
     private LocalDateTime startTime;

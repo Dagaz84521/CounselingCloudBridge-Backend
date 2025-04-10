@@ -1,26 +1,32 @@
-package com.ecnu.dto;
+package com.ecnu.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionRecordDTO implements Serializable {
+public class RequestRecord {
+    //记录唯一标识
+    private Long recordId;
 
-    private Long sessionId;
+    //关联会话ID
+    private Long requestId;
 
+    //发送者ID
     private Long senderId;
 
+    //接收者ID
     private Long receiverId;
 
+    //会话内容（加密存储）
     private String content;
 
-    private LocalDateTime createTime;
+    //创建时间
+    private LocalDateTime createdAt;
 }
