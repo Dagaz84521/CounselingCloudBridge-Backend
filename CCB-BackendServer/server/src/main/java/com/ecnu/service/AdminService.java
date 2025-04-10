@@ -32,4 +32,12 @@ public interface AdminService {
     List<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO);
 
     CounselorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO);
+
+    TodaySessionVariationVO getTodaySessionVariation();
+
+    WeekSessionVariationVO getWeekSessionVariation();
+
+    List<CounselorNumRankVO> getCounselorNumRank();
+
+    List<CounselorRatingRankVO> getCounselorRatingRank();
 }

@@ -113,4 +113,32 @@ public class AdminController {
         return Result.success(counselorHistoryVO);
     }
 
+    @GetMapping("/todaySessionVariation")
+    @ApiOperation(value = "今日咨询数量变化")
+    public Result<TodaySessionVariationVO> getTodaySessionVariation() {
+        TodaySessionVariationVO todaySessionVariationVO = adminService.getTodaySessionVariation();
+        return Result.success(todaySessionVariationVO);
+    }
+
+    @GetMapping("/weekSessionVariation")
+    @ApiOperation(value = "7日咨询数量变化")
+    public Result<WeekSessionVariationVO> getWeekSessionVariation() {
+        WeekSessionVariationVO weekSessionVariationVO = adminService.getWeekSessionVariation();
+        return Result.success(weekSessionVariationVO);
+    }
+
+    @GetMapping("/counselorNumRank")
+    @ApiOperation(value = "咨询师咨询数量排名")
+    public Result<List<CounselorNumRankVO>> getCounselorNumRank() {
+        List<CounselorNumRankVO> counselorNumRankVOList = adminService.getCounselorNumRank();
+        return Result.success(counselorNumRankVOList);
+    }
+
+    @GetMapping("/counselorRatingRank")
+    @ApiOperation(value = "咨询师咨询评分排名")
+    public Result<List<CounselorRatingRankVO>> getCounselorRatingRank() {
+        List<CounselorRatingRankVO> counselorRatingRankVOList = adminService.getCounselorRatingRank();
+        return Result.success(counselorRatingRankVOList);
+    }
+
 }

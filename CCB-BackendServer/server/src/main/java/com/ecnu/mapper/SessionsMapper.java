@@ -4,6 +4,8 @@ package com.ecnu.mapper;
 import com.ecnu.dto.*;
 import com.ecnu.entity.Session;
 import com.ecnu.vo.ClientSessionVO;
+import com.ecnu.vo.CounselorNumRankVO;
+import com.ecnu.vo.CounselorRatingRankVO;
 import com.ecnu.vo.RecentSession;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -112,4 +115,16 @@ public interface SessionsMapper {
             "LIMIT 1"
     })
     Session getEarliestPendingSession(Long counselorId);
+
+    @Select("select COUNT(*) from sessions where status = 'closed' and start_time >= #{begin} and start_time < #{end}")
+    Long getTodaySessionVariation(LocalDateTime begin, LocalDateTime end);
+
+    @Select("select COUNT(*) from sessions where status = 'closed' and date(start_time) = date(#{date}) ")
+    Long getWeekSSessionVariation(LocalDate date);
+
+    @Select("select real_name, avatar_url, tmp.num from (select counselor_id, count(*) as num from sessions where status = 'closed' and date(start_time) = curdate() group by counselor_id order by num desc limit 3) as tmp inner join users on tmp.counselor_id = user_id")
+    List<CounselorNumRankVO> getCounselorNumRank();
+
+    @Select("select real_name, avatar_url, tmp.rating from (select counselor_id, avg(rating) as rating from sessions where status = 'closed' and date(start_time) = curdate() group by counselor_id order by rating desc limit 3) as tmp inner join users on tmp.counselor_id= user_id")
+    List<CounselorRatingRankVO> getCounselorRatingRank();
 }
