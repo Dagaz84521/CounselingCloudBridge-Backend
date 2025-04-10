@@ -60,7 +60,7 @@ public class ClientController {
 
         ClientSessionVO clientSessionVO = clientService.getSession();
 
-        return Result.success();
+        return Result.success(clientSessionVO);
     }
 
 
