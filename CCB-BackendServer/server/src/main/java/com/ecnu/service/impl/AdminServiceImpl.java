@@ -15,7 +15,9 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.Relation;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -252,6 +254,41 @@ public class AdminServiceImpl implements AdminService {
             recentSession.setDuration(duration);
         }
         return new CounselorHistoryVO(sessions, page.getTotal());
+    }
+
+    public TodaySessionVariationVO getTodaySessionVariation() {
+        List<LocalDateTime> timeList = new ArrayList<>(25);
+        LocalDateTime begin = LocalDateTime.now().with(LocalTime.MIN);
+        for (int i = 0; i < 25; i++) {
+            timeList.add(begin.plusHours(i));
+        }
+        List<Long> numList = new ArrayList<>(24);
+        for(int i = 0; i < 24; i++) {
+            numList.add(sessionsMapper.getTodaySessionVariation(timeList.get(i), timeList.get(i + 1)));
+        }
+        return new TodaySessionVariationVO(timeList, numList);
+    }
+
+    public WeekSessionVariationVO getWeekSessionVariation() {
+        List<LocalDate> timeList = new ArrayList<>(7);
+        LocalDate begin = LocalDate.now();
+        begin = begin.minusDays(6);
+        for (int i = 0; i < 7; i++) {
+            timeList.add(begin.plusDays(i));
+        }
+        List<Long> numList = new ArrayList<>(7);
+        for(int i = 0; i < 7; i++) {
+            numList.add(sessionsMapper.getWeekSSessionVariation(timeList.get(i)));
+        }
+        return new WeekSessionVariationVO(timeList, numList);
+    }
+
+    public List<CounselorNumRankVO> getCounselorNumRank() {
+        return sessionsMapper.getCounselorNumRank();
+    }
+
+    public List<CounselorRatingRankVO> getCounselorRatingRank() {
+        return sessionsMapper.getCounselorRatingRank();
     }
 
 }
