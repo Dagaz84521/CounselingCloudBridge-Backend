@@ -1,6 +1,6 @@
 package com.ecnu.service.impl;
 
-import com.ecnu.dto.SessionRecordDTO;
+import com.ecnu.dto.MessageDTO;
 import com.ecnu.entity.SessionRecord;
 import com.ecnu.mapper.SessionRecordMapper;
 import com.ecnu.service.SessionRecordService;
@@ -25,7 +25,7 @@ public class SessionRecordServiceImpl implements SessionRecordService {
     }
 
     @Override
-    public SessionRecordVO insertSessionRecord(SessionRecordDTO dto) {
+    public SessionRecordVO insertSessionRecord(MessageDTO dto) {
         SessionRecord message = dtoToEntity(dto);
         sessionRecordMapper.insert(message);
         return entityToVO(message);
@@ -50,9 +50,9 @@ public class SessionRecordServiceImpl implements SessionRecordService {
                 .build();
     }
 
-    private SessionRecord dtoToEntity(SessionRecordDTO message) {
+    private SessionRecord dtoToEntity(MessageDTO message) {
         return SessionRecord.builder()
-                .sessionId(message.getSessionId())
+                .sessionId(message.getMessageId())
                 .senderId(message.getSenderId())
                 .receiverId(message.getReceiverId())
                 .content(message.getContent())

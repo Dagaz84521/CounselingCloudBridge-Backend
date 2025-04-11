@@ -1,26 +1,23 @@
-package com.ecnu.dto;
+package com.ecnu.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionRecordDTO implements Serializable {
+public class RequestRecordVO {
 
-    private Long sessionId;
+    private Long requestId;
 
     private Long senderId;
 
-    private Long receiverId;
-
     private String content;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 }

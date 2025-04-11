@@ -110,4 +110,28 @@ public class CounselorController {
 
         return Result.success(counselorDetail);
     }
+
+    /**
+     * 咨询师向督导发起求助
+     * @param supervisorId 督导ID
+     * @return 咨询师详细信息
+     * */
+    @PostMapping("/request/start/{supervisorId}")
+    @ApiOperation(value = "咨询师向督导发起求助")
+    public Result<Long> startRequest(@PathVariable Long supervisorId) {
+        Long requestId = counselorService.addRequest(supervisorId);
+        return Result.success(requestId);
+    }
+
+    /**
+     * 咨询师主动结束求助
+     * @param requestId 需要结束求助的ID
+     * @return 咨询师详细信息
+     * */
+    @PostMapping("/request/end/{requestId}")
+    @ApiOperation(value = "咨询师主动结束求助")
+    public Result<Long> endRequest(@PathVariable Long requestId) {
+        counselorService.endRequest(requestId);
+        return Result.success();
+    }
 }

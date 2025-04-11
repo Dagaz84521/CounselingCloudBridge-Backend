@@ -24,8 +24,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Autowired
     private CounselorMapper counselorMapper;
+
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private SessionsMapper sessionsMapper;
 

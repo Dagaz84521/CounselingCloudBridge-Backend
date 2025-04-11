@@ -7,6 +7,7 @@ import com.ecnu.dto.OnlineCounselorDTO;
 import com.ecnu.dto.SupervisorTodayRequestDTO;
 import com.ecnu.entity.SupervisionRequest;
 import com.ecnu.entity.User;
+import com.ecnu.exception.IllegalRequestIDException;
 import com.ecnu.mapper.*;
 import com.ecnu.service.SupervisorService;
 import com.ecnu.vo.*;
@@ -110,5 +111,26 @@ public class SupervisorServiceImpl implements SupervisorService {
             request.setDuration(duration);
         }
         return new SupervisorHistoryVO(requests, page.getTotal());
+    }
+
+    @Override
+    public Long acceptRequest(Long supervisorId, Long counselorId) {
+        SupervisionRequest supervisionRequest = requestMapper.getPendingByParticipationId(supervisorId, counselorId);
+        if (supervisionRequest == null) {
+            return null;
+        }
+        supervisionRequest.setStatus(RequestStatusConstant.ACCEPTED);
+        requestMapper.update(supervisionRequest);
+        return supervisionRequest.getRequestId();
+    }
+
+    @Override
+    public void endRequest(Long requestId) throws IllegalRequestIDException {
+        SupervisionRequest supervisionRequest = requestMapper.getById(requestId);
+        if (supervisionRequest == null) {
+            throw new IllegalRequestIDException("非法requestId: " + requestId );
+        }
+        supervisionRequest.setStatus(RequestStatusConstant.COMPLETED);
+        requestMapper.update(supervisionRequest);
     }
 }

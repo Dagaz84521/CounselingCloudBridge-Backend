@@ -20,4 +20,8 @@ public interface SupervisorService {
     List<OnlineCounselor> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO);
 
     SupervisorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO);
+
+    Long acceptRequest(Long supervisorId, Long counselorId);
+
+    void endRequest(Long requestId);
 }
