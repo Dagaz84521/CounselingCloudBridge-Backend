@@ -76,4 +76,18 @@ public interface CounselorService {
      * @param counselorId
      */
     CounselorDetailVO getCounselorDetailById(Long counselorId);
+
+
+    /**
+     * 咨询师向督导发起求助
+     * @param supervisorId
+     */
+    Long addRequest(Long supervisorId);
+
+
+    /**
+     * 咨询师求助求助
+     * @param requestId
+     */
+    void endRequest(Long requestId);
 }

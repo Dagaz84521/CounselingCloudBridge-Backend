@@ -27,6 +27,8 @@ public class ClientController {
     @Autowired
     private SessionsService sessionsService;
 
+
+
     @GetMapping("/home")
     @ApiOperation(value = "客户首页")
     public Result<List<ClientHomeVO>> getHomeInfo() {

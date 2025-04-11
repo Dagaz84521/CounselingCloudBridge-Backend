@@ -59,6 +59,7 @@ public class ChatServiceImpl implements ChatService {
         Long receiverId = dto.getReceiverId();
 
         String message = null;
+
         try {
             message = objectMapper.writeValueAsString(sessionRecordVO);
         } catch (JsonProcessingException e) {
@@ -83,6 +84,7 @@ public class ChatServiceImpl implements ChatService {
         Long receiverId = dto.getReceiverId();
 
         String message = null;
+
         try {
             message = objectMapper.writeValueAsString(requestRecordVO);
         } catch (JsonProcessingException e) {
