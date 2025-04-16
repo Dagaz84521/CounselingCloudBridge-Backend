@@ -40,4 +40,8 @@ public interface AdminService {
     List<CounselorNumRankVO> getCounselorNumRank();
 
     List<CounselorRatingRankVO> getCounselorRatingRank();
+
+    void banUser(Long userId);
+
+    void unbanUser(Long userId);
 }

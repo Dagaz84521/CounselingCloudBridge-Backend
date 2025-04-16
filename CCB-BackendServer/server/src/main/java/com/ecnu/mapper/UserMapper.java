@@ -70,4 +70,12 @@ public interface UserMapper {
     @Update("update users set real_name = #{realName} where user_id = #{supervisorId}")
     @AutoFill(OperationType.UPDATE)
     void updateSupervisor(Long supervisorId, String realName);
+
+    @Update("update users set status = 'banned' where user_id = #{userId}")
+    @AutoFill(OperationType.UPDATE)
+    void banUser(Long userId);
+
+    @Update("update users set status = 'inactive' where user_id = #{userId}")
+    @AutoFill(OperationType.UPDATE)
+    void unbanUser(Long userId);
 }

@@ -84,6 +84,11 @@ public interface CounselorService {
     CounselorDetailVO getCounselorDetailById(Long counselorId);
 
 
+    String getBio();
+
+    void updateBio(String bio);
+
+
     /**
      * 咨询师向督导发起求助
      * @param supervisorId
@@ -96,4 +101,5 @@ public interface CounselorService {
      * @param requestId
      */
     void endRequest(Long requestId);
+
 }
