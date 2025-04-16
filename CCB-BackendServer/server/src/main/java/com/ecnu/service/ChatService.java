@@ -1,6 +1,7 @@
 package com.ecnu.service;
 
-import com.ecnu.dto.SessionRecordDTO;
+import com.ecnu.dto.MessageDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.socket.WebSocketSession;
 
 public interface ChatService {
@@ -12,8 +13,14 @@ public interface ChatService {
     void registerSession(Long senderId, WebSocketSession session);
 
     /**
-     * 发送消息给指定会话
+     * 发送消息给指定会话(咨询师和客户之间)
      * @return
      */
-    void send(SessionRecordDTO dto);
+    void sendToSession(MessageDTO dto) throws JsonProcessingException;
+
+    /**
+     * 发送消息给指定Request(咨询师和督导之间)
+     * @return
+     */
+    void sendToRequest(MessageDTO dto);
 }

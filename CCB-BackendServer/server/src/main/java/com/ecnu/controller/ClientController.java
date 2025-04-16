@@ -28,6 +28,8 @@ public class ClientController {
     @Autowired
     private SessionsService sessionsService;
 
+
+
     @GetMapping("/home")
     @ApiOperation(value = "客户首页")
     public Result<List<ClientHomeVO>> getHomeInfo() {
@@ -61,7 +63,7 @@ public class ClientController {
 
         ClientSessionVO clientSessionVO = clientService.getSession();
 
-        return Result.success();
+        return Result.success(clientSessionVO);
     }
 
 
@@ -82,7 +84,7 @@ public class ClientController {
 
 
     /**
-     * 客户结束一个新的咨询
+     * 客户结束一个咨询
      * @param
      * @return
      */
@@ -98,12 +100,12 @@ public class ClientController {
     }
 
     /**
-     * 客户结束一个新的咨询
+     * 获取当前用户对应的活跃会话
      * @param
      * @return
      */
     @PostMapping("/session/get")
-    @ApiOperation(value = "查看咨询师排班页面")
+    @ApiOperation(value = "获取当前用户对应的活跃会话")
     public Result<List<Long>> getRelatedSessions(
             @RequestParam("userId") Long userId) {
         log.info("客户 {} 获取会话", userId);

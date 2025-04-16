@@ -61,6 +61,8 @@ public class UserController {
                 jwtProperties.getAdminTtl(),
                 claims);
 
+        log.info("登录成功！token: {}", token);
+
         UserLoginVO userLoginVO = UserLoginVO.builder()
                 .userId(user.getUserId())
                 .userType(user.getUserType())

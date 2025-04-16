@@ -16,4 +16,8 @@ public class SessionAddAdviceDTO implements Serializable {
     private String type;
 
     private String advice;
+
+    private Long clientid;
+
+    private Long sessionid;
 }
