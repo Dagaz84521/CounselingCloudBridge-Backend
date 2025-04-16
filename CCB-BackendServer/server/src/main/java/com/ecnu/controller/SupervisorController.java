@@ -1,17 +1,19 @@
 package com.ecnu.controller;
 
+import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
+import com.ecnu.exception.IllegalRequestIDException;
 import com.ecnu.result.Result;
 import com.ecnu.service.SupervisorService;
+import com.ecnu.utils.SmsUtil;
 import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.time.LocalDate;
@@ -56,4 +58,22 @@ public class SupervisorController {
         return Result.success(supervisorHistoryVO);
     }
 
+    @PostMapping("/request/accept/{counselorId}")
+    public Result<Long> acceptRequest(@PathVariable("counselorId") Long counselorId) {
+        Long requestId = supervisorService.acceptRequest(BaseContext.getCurrentId(), counselorId);
+        if (requestId == null) {
+            return Result.error("无对应CounselorID: " + counselorId);
+        }
+        return Result.success(requestId);
+    }
+
+    @PostMapping("/request/end/{requestId}")
+    public Result<Object> endRequest(@PathVariable("requestId") Long requestId) {
+        try {
+            supervisorService.endRequest(requestId);
+        } catch (IllegalRequestIDException e) {
+            return Result.error(e.getMessage());
+        }
+        return Result.success();
+    }
 }

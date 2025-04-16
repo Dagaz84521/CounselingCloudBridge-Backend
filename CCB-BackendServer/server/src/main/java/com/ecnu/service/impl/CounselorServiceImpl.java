@@ -1,5 +1,6 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.constant.RequestStatusConstant;
 import com.ecnu.constant.SessionStatusConstant;
 import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
@@ -7,11 +8,9 @@ import com.ecnu.dto.CounselorTodaySessionDTO;
 import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.entity.Counselor;
 import com.ecnu.entity.Session;
+import com.ecnu.entity.SupervisionRequest;
 import com.ecnu.entity.User;
-import com.ecnu.mapper.CounselorMapper;
-import com.ecnu.mapper.ScheduleMapper;
-import com.ecnu.mapper.SessionsMapper;
-import com.ecnu.mapper.UserMapper;
+import com.ecnu.mapper.*;
 import com.ecnu.service.CounselorService;
 import com.ecnu.vo.*;
 import com.github.pagehelper.Page;
@@ -20,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +28,21 @@ public class CounselorServiceImpl implements CounselorService {
 
     @Autowired
     private CounselorMapper counselorMapper;
+
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private SessionsMapper sessionsMapper;
+
     @Autowired
     private ScheduleMapper scheduleMapper;
+
+    @Autowired
+    private RequestMapper requestMapper;
+
+    @Autowired
+    private RelationMapper relationMapper;
 
     /**
      * 获取咨询师信息
@@ -168,8 +177,8 @@ public class CounselorServiceImpl implements CounselorService {
      * 咨询师添加咨询评价
      * @param sessionAddAdviceDTO
      */
-    public void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid) {
-        sessionsMapper.addSessionAdvice(sessionAddAdviceDTO, sessionid);
+    public void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO) {
+        sessionsMapper.addSessionAdvice(sessionAddAdviceDTO);
     }
 
     @Override
@@ -187,11 +196,39 @@ public class CounselorServiceImpl implements CounselorService {
                 .build();
     }
 
+
     public String getBio() {
         return counselorMapper.getBio(BaseContext.getCurrentId());
     }
 
     public void updateBio(String bio) {
         counselorMapper.updateBio(BaseContext.getCurrentId(), bio);
+    }
+    @Override
+    public Long addRequest(Long supervisorId) {
+
+        Long relationId = relationMapper.getByParticipationId(supervisorId, BaseContext.getCurrentId()).getRelationId();
+
+        SupervisionRequest request = SupervisionRequest.builder()
+                .relationId(relationId)
+                .counselorId(BaseContext.getCurrentId())
+                .supervisorId(supervisorId)
+                .startTime(LocalDateTime.now())
+                .status("pending")
+                .build();
+
+        requestMapper.insert(request);
+        return request.getRequestId();
+    }
+
+    @Override
+    public void endRequest(Long requestId) {
+
+        SupervisionRequest request = requestMapper.getById(requestId);
+
+        request.setStatus(RequestStatusConstant.COMPLETED);
+
+        requestMapper.update(request);
+
     }
 }

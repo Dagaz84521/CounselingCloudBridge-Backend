@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
 import java.util.List;
@@ -26,4 +27,8 @@ public interface RelationMapper {
             "values(#{counselorId}, #{supervisorId})")
     @AutoFill(OperationType.BOTH)
     void insert(CounselorSupervisorRelation build);
+
+    @Select("select * from counselor_supervisor_relation where supervisor_id = #{supervisorId} and counselor_id = #{counselorId}")
+    CounselorSupervisorRelation getByParticipationId(Long supervisorId, Long counselorId);
+
 }

@@ -68,7 +68,7 @@ public interface CounselorService {
      * 添加咨询评价
      * @param sessionAddAdviceDTO
      */
-    void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO, Long sessionid);
+    void addSessionAdvice(SessionAddAdviceDTO sessionAddAdviceDTO);
 
 
     /**
@@ -77,7 +77,23 @@ public interface CounselorService {
      */
     CounselorDetailVO getCounselorDetailById(Long counselorId);
 
+
     String getBio();
 
     void updateBio(String bio);
+
+
+    /**
+     * 咨询师向督导发起求助
+     * @param supervisorId
+     */
+    Long addRequest(Long supervisorId);
+
+
+    /**
+     * 咨询师求助求助
+     * @param requestId
+     */
+    void endRequest(Long requestId);
+
 }

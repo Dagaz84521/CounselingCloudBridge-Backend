@@ -1,9 +1,11 @@
 package com.ecnu.controller;
 
+import com.ecnu.constant.PageConstant;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.result.Result;
 import com.ecnu.service.CounselorService;
+import com.ecnu.service.SessionRecordService;
 import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +25,8 @@ public class CounselorController {
     @Autowired
     private CounselorService counselorService;
 
+    @Autowired
+    private SessionRecordService sessionRecordService;
 
     /**
      * 咨询师首页
@@ -65,8 +69,10 @@ public class CounselorController {
      */
     @GetMapping("/session/{sessionid}/{clientid}")
     @ApiOperation(value = "咨询师咨询页面")
-    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
+    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid, @RequestParam Long page) {
         CounselorSessionVO counselorSessionVO = counselorService.getSession(sessionid, clientid);
+        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionid, page, PageConstant.RECORD_HISTORY_PER_PAGE);
+        counselorSessionVO.setHistory(records);
         return Result.success(counselorSessionVO);
     }
 
@@ -77,9 +83,9 @@ public class CounselorController {
      */
     @PutMapping("/session")
     @ApiOperation(value = "咨询师添加咨询评价")
-    public Result addSessionAdvice(@RequestBody SessionAddAdviceDTO sessionAddAdviceDTO, @PathVariable Long sessionid) {
+    public Result addSessionAdvice(@RequestBody SessionAddAdviceDTO sessionAddAdviceDTO) {
         log.info("咨询师添加咨询评价:{}", sessionAddAdviceDTO);
-        counselorService.addSessionAdvice(sessionAddAdviceDTO, sessionid);
+        counselorService.addSessionAdvice(sessionAddAdviceDTO);
         return Result.success();
     }
 
@@ -105,6 +111,7 @@ public class CounselorController {
         return Result.success(counselorDetail);
     }
 
+
     @GetMapping("/updateBio")
     @ApiOperation(value = "获取咨询师简介")
     public Result<String> getBio() {
@@ -115,6 +122,28 @@ public class CounselorController {
     @ApiOperation(value = "更新咨询师简介")
     public Result updateBio(@RequestBody String bio) {
         counselorService.updateBio(bio);
+    }
+    /**
+     * 咨询师向督导发起求助
+     * @param supervisorId 督导ID
+     * @return 咨询师详细信息
+     * */
+    @PostMapping("/request/start/{supervisorId}")
+    @ApiOperation(value = "咨询师向督导发起求助")
+    public Result<Long> startRequest(@PathVariable Long supervisorId) {
+        Long requestId = counselorService.addRequest(supervisorId);
+        return Result.success(requestId);
+    }
+
+    /**
+     * 咨询师主动结束求助
+     * @param requestId 需要结束求助的ID
+     * @return 咨询师详细信息
+     * */
+    @PostMapping("/request/end/{requestId}")
+    @ApiOperation(value = "咨询师主动结束求助")
+    public Result<Long> endRequest(@PathVariable Long requestId) {
+        counselorService.endRequest(requestId);
         return Result.success();
     }
 }

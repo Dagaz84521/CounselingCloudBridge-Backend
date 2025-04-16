@@ -1,11 +1,11 @@
 package com.ecnu.handler;
 
-import com.ecnu.dto.SessionRecordDTO;
+import com.ecnu.constant.MessageTypeConstant;
+import com.ecnu.dto.MessageDTO;
 import com.ecnu.service.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -53,9 +53,16 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // 接收到客户端消息后，解析并处理
         String payload = message.getPayload();
 
-        SessionRecordDTO dto = objectMapper.readValue(payload, SessionRecordDTO.class);
+        MessageDTO dto = objectMapper.readValue(payload, MessageDTO.class);
 
-        chatService.send(dto);
+        String type = dto.getType();
+
+        if (type.equals(MessageTypeConstant.SESSION)) {
+            chatService.sendToSession(dto);
+        } else if (type.equals(MessageTypeConstant.REQUEST)) {
+            chatService.sendToRequest(dto);
+        }
+
 
         System.out.println(payload);
     }
