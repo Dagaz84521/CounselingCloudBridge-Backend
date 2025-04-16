@@ -85,6 +85,15 @@ public class CounselorServiceImpl implements CounselorService {
     }
 
     /**
+     * 获取和咨询师关联的督导ID
+     * @return
+     */
+    @Override
+    public List<Long> getSupervisorIds(Long counselorId) {
+        return relationMapper.getSupervisorIds(counselorId);
+    }
+
+    /**
      * 获取咨询师最近的会话
      * @return
      */
