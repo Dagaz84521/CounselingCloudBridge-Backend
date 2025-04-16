@@ -31,4 +31,6 @@ public interface RelationMapper {
     @Select("select * from counselor_supervisor_relation where supervisor_id = #{supervisorId} and counselor_id = #{counselorId}")
     CounselorSupervisorRelation getByParticipationId(Long supervisorId, Long counselorId);
 
+    @Select("select supervisor_id from counselor_supervisor_relation where counselor_id = #{counselorId}")
+    List<Long> getSupervisorIds(Long counselorId);
 }

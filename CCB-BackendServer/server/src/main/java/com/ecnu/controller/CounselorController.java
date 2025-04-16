@@ -1,6 +1,7 @@
 package com.ecnu.controller;
 
 import com.ecnu.constant.PageConstant;
+import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.result.Result;
@@ -39,11 +40,13 @@ public class CounselorController {
         List<String> schedule = counselorService.getSchedule();
         List<RecentSession> recentSessions = counselorService.getRecentSessions();
         List<Session> sessionList = counselorService.getSessionList();
+        List<Long> supervisorIds = counselorService.getSupervisorIds(BaseContext.getCurrentId());
         CounselorHomeVO counselorHomeVO = new CounselorHomeVO().builder()
                 .counselorInfo(counselorInfo)
                 .schedule(schedule)
                 .recentSessions(recentSessions)
                 .sessionList(sessionList)
+                .supervisorIds(supervisorIds)
                 .build();
         return Result.success(counselorHomeVO);
     }
