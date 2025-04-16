@@ -27,4 +27,6 @@ public class AdminAddCounselorDTO implements Serializable {
     private String certification;
 
     private String expertise;
+
+    private Integer yearsExperience;
 }

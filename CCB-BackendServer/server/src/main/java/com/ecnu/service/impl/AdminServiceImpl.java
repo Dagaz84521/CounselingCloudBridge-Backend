@@ -14,6 +14,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -147,6 +148,7 @@ public class AdminServiceImpl implements AdminService {
         return new AdminCounselorPageVO(counselorList, page.getTotal());
     }
 
+    @Transactional
     public void updateCounselor(AdminUpdateCounselorDTO adminUpdateCounselorDTO) {
         userMapper.updateCounselor(adminUpdateCounselorDTO.getCounselorId(), adminUpdateCounselorDTO.getRealName());
         relationMapper.updateByCounselorId(adminUpdateCounselorDTO.getCounselorId(),adminUpdateCounselorDTO.getSupervisorId());
@@ -157,6 +159,7 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+    @Transactional
     public void addCounselor(AdminAddCounselorDTO adminAddCounselorDTO) {
         if(userMapper.getByPhoneNumber(adminAddCounselorDTO.getPhoneNumber()) != null) {
             throw new AccountHasExistedException(MessageConstant.ACCOUNT_HAS_EXISTED);
@@ -176,6 +179,7 @@ public class AdminServiceImpl implements AdminService {
                 .counselorId(counselorId)
                 .certification(adminAddCounselorDTO.getCertification())
                 .expertise(adminAddCounselorDTO.getExpertise())
+                .yearsExperience(adminAddCounselorDTO.getYearsExperience())
                 .build());
         relationMapper.insert(new CounselorSupervisorRelation().builder()
                 .counselorId(counselorId)
@@ -204,6 +208,7 @@ public class AdminServiceImpl implements AdminService {
         return new AdminSupervisorPageVO(supervisorList, page.getTotal());
     }
 
+    @Transactional
     public void updateSupervisor(AdminUpdateSupervisorDTO adminUpdateSupervisorDTO) {
         userMapper.updateSupervisor(adminUpdateSupervisorDTO.getSupervisorId(), adminUpdateSupervisorDTO.getRealName());
         scheduleMapper.deleteSupervisorSchedule(adminUpdateSupervisorDTO.getSupervisorId());
@@ -289,6 +294,14 @@ public class AdminServiceImpl implements AdminService {
 
     public List<CounselorRatingRankVO> getCounselorRatingRank() {
         return sessionsMapper.getCounselorRatingRank();
+    }
+
+    public void banUser(Long userId) {
+        userMapper.banUser(userId);
+    }
+
+    public void unbanUser(Long userId) {
+        userMapper.unbanUser(userId);
     }
 
 }

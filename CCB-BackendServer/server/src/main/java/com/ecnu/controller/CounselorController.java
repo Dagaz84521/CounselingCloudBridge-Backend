@@ -111,6 +111,18 @@ public class CounselorController {
         return Result.success(counselorDetail);
     }
 
+
+    @GetMapping("/updateBio")
+    @ApiOperation(value = "获取咨询师简介")
+    public Result<String> getBio() {
+        return Result.success(counselorService.getBio());
+    }
+
+    @PutMapping("/updateBio")
+    @ApiOperation(value = "更新咨询师简介")
+    public Result updateBio(@RequestBody String bio) {
+        counselorService.updateBio(bio);
+    }
     /**
      * 咨询师向督导发起求助
      * @param supervisorId 督导ID

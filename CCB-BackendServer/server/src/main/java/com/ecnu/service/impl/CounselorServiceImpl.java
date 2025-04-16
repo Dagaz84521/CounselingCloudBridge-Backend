@@ -196,6 +196,14 @@ public class CounselorServiceImpl implements CounselorService {
                 .build();
     }
 
+
+    public String getBio() {
+        return counselorMapper.getBio(BaseContext.getCurrentId());
+    }
+
+    public void updateBio(String bio) {
+        counselorMapper.updateBio(BaseContext.getCurrentId(), bio);
+    }
     @Override
     public Long addRequest(Long supervisorId) {
 
@@ -221,5 +229,6 @@ public class CounselorServiceImpl implements CounselorService {
         request.setStatus(RequestStatusConstant.COMPLETED);
 
         requestMapper.update(request);
+
     }
 }
