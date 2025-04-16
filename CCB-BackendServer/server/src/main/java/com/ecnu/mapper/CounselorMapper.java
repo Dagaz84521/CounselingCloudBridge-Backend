@@ -50,7 +50,13 @@ public interface CounselorMapper {
 
     Page<AdminCounselorVO> getCounselorList(AdminCounselorDTO adminCounselorDTO);
 
-    @Insert("insert into counselors(counselor_id, certification, expertise, years_experiencem, bio)" +
-            "values(#{counselorId}, #{certification}, #{expertise}, #{years_experiencem},#{bio})")
+    @Insert("insert into counselors(counselor_id, certification, expertise, years_experience)" +
+            "values(#{counselorId}, #{certification}, #{expertise}, #{yearsExperience})")
     void insert(Counselor counselor);
+
+    @Select("select bio from counselors where counselor_id = #{currentId}")
+    String getBio(Long currentId);
+
+    @Update("update counselors set bio = #{bio} where counselor_id = #{currentId}")
+    void updateBio(Long currentId, String bio);
 }

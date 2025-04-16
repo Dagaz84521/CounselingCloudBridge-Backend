@@ -186,4 +186,12 @@ public class CounselorServiceImpl implements CounselorService {
                 .bio(counselor.getBio())
                 .build();
     }
+
+    public String getBio() {
+        return counselorMapper.getBio(BaseContext.getCurrentId());
+    }
+
+    public void updateBio(String bio) {
+        counselorMapper.updateBio(BaseContext.getCurrentId(), bio);
+    }
 }

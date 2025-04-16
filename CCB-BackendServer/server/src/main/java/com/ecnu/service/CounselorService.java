@@ -76,4 +76,8 @@ public interface CounselorService {
      * @param counselorId
      */
     CounselorDetailVO getCounselorDetailById(Long counselorId);
+
+    String getBio();
+
+    void updateBio(String bio);
 }

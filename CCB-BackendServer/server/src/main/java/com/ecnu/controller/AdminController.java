@@ -141,4 +141,18 @@ public class AdminController {
         return Result.success(counselorRatingRankVOList);
     }
 
+    @PutMapping("/user/ban/{userId}")
+    @ApiOperation(value = "禁用用户")
+    public Result banUser(@PathVariable Long userId) {
+        adminService.banUser(userId);
+        return Result.success();
+    }
+
+    @PutMapping("/user/unban/{userId}")
+    @ApiOperation(value = "解禁用户")
+    public Result unbanUser(@PathVariable Long userId) {
+        adminService.unbanUser(userId);
+        return Result.success();
+    }
+
 }
