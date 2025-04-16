@@ -1,5 +1,6 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.constant.SessionStatusConstant;
 import com.ecnu.context.BaseContext;
 import com.ecnu.dto.ClientCounselorDTO;
 import com.ecnu.entity.Counselor;
@@ -8,6 +9,7 @@ import com.ecnu.mapper.CounselorMapper;
 import com.ecnu.mapper.SessionsMapper;
 import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.ClientService;
+import com.ecnu.vo.ClientCounselorDetailVO;
 import com.ecnu.vo.ClientHomeVO;
 import com.ecnu.vo.ClientSessionVO;
 import com.github.pagehelper.Page;
@@ -46,6 +48,7 @@ public class ClientServiceImpl implements ClientService {
             clientHomeVO.setAvatarUrl(user.getAvatarUrl());
             clientHomeVO.setExpertise(counselor.getExpertise());
             clientHomeVO.setRating(counselor.getRating());
+            clientHomeVO.setYearsExperience(counselor.getYearsExperience());
             if(counselor.getCurrentSessions() < 5) {
                 clientHomeVO.setIsFree(true);
             } else {
@@ -69,6 +72,10 @@ public class ClientServiceImpl implements ClientService {
     public ClientSessionVO getSession() {
         ClientSessionVO clientSessionVO = sessionsMapper.getClientSession(BaseContext.getCurrentId());
         return clientSessionVO;
+    }
+
+    public ClientCounselorDetailVO getCounselorDetailById(Long counselorId) {
+        return new ClientCounselorDetailVO(counselorMapper.getBio(counselorId), sessionsMapper.getTotalSessions(counselorId, SessionStatusConstant.CLOSED));
     }
 
 }

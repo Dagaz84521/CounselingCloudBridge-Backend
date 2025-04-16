@@ -1,6 +1,7 @@
 package com.ecnu.service;
 
 import com.ecnu.dto.ClientCounselorDTO;
+import com.ecnu.vo.ClientCounselorDetailVO;
 import com.ecnu.vo.ClientHomeVO;
 import com.ecnu.vo.ClientSessionVO;
 
@@ -20,4 +21,6 @@ public interface ClientService {
     List<ClientHomeVO> getCounselorScheduled(ClientCounselorDTO clientCounselorDTO);
 
     ClientSessionVO getSession();
+
+    ClientCounselorDetailVO getCounselorDetailById(Long counselorId);
 }

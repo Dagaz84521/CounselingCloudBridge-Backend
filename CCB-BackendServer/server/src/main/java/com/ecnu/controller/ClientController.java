@@ -5,6 +5,7 @@ import com.ecnu.entity.Session;
 import com.ecnu.result.Result;
 import com.ecnu.service.ClientService;
 import com.ecnu.service.SessionsService;
+import com.ecnu.vo.ClientCounselorDetailVO;
 import com.ecnu.vo.ClientHomeVO;
 import com.ecnu.vo.ClientSessionVO;
 import io.swagger.annotations.Api;
@@ -110,5 +111,15 @@ public class ClientController {
         log.info("客户 {} 获取会话", userId);
         List<Long> sessionIds = sessionsService.getRelatedSession(userId);
         return Result.success(sessionIds);
+    }
+
+    @GetMapping("/counselor/{counselorId}")
+    @ApiOperation(value = "查看咨询师详情")
+    public Result<ClientCounselorDetailVO> getCounselorDetail(@PathVariable("counselorId") Long counselorId) {
+        log.info("查看咨询师详情");
+
+        ClientCounselorDetailVO clientCounselorDetailVO = clientService.getCounselorDetailById(counselorId);
+
+        return Result.success(clientCounselorDetailVO);
     }
 }
