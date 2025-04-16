@@ -24,4 +24,6 @@ public class ClientHomeVO implements Serializable {
     private Float rating;
 
     private Boolean isFree;
+
+    private Integer yearsExperience;
 }
