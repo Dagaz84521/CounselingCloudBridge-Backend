@@ -125,6 +125,7 @@ public class CounselorController {
     @ApiOperation(value = "更新咨询师简介")
     public Result updateBio(@RequestBody String bio) {
         counselorService.updateBio(bio);
+        return Result.success();
     }
     /**
      * 咨询师向督导发起求助
