@@ -16,5 +16,5 @@ public class OnlineSupervisorVO implements Serializable {
 
     List<OnlineSupervisor> onlineSupervisors;
 
-    Integer total;
+    Long total;
 }

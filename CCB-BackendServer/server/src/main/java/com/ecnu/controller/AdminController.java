@@ -31,12 +31,8 @@ public class AdminController {
     @GetMapping("/onlinecounselor")
     @ApiOperation(value = "在线咨询师")
     public Result<OnlineCounselorVO> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
-        List<OnlineCounselor> onlineCounselorList = adminService.getOnlineCounselor(onlineCounselorDTO);
 
-        OnlineCounselorVO onlineCounselorVO = OnlineCounselorVO.builder()
-                .onlineCounselors(onlineCounselorList)
-                .total(onlineCounselorList.size())
-                .build();
+        OnlineCounselorVO onlineCounselorVO = adminService.getOnlineCounselor(onlineCounselorDTO);
 
         return Result.success(onlineCounselorVO);
     }
@@ -44,12 +40,8 @@ public class AdminController {
     @GetMapping("/onlinesupervisor")
     @ApiOperation(value = "在线督导")
     public Result<OnlineSupervisorVO> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
-        List<OnlineSupervisor> onlineSupervisorList = adminService.getOnlineSupervisor(onlineCounselorDTO);
 
-        OnlineSupervisorVO onlineSupervisorVO = OnlineSupervisorVO.builder()
-                .onlineSupervisors(onlineSupervisorList)
-                .total(onlineSupervisorList.size())
-                .build();
+        OnlineSupervisorVO onlineSupervisorVO = adminService.getOnlineSupervisor(onlineCounselorDTO);
 
         return Result.success(onlineSupervisorVO);
     }

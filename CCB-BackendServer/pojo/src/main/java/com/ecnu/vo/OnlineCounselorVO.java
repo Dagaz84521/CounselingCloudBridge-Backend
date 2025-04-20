@@ -16,5 +16,5 @@ public class OnlineCounselorVO implements Serializable {
 
     List<OnlineCounselor> onlineCounselors;
 
-    Integer total;
+    Long total;
 }
