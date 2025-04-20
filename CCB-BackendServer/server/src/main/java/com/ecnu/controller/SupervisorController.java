@@ -46,9 +46,15 @@ public class SupervisorController {
 
     @GetMapping("onlinecounselor")
     @ApiOperation(value = "在线咨询师列表")
-    public Result<List<OnlineCounselor>> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
+    public Result<OnlineCounselorVO> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
         List<OnlineCounselor> onlineCounselorList = supervisorService.getOnlineCounselor(onlineCounselorDTO);
-        return Result.success(onlineCounselorList);
+
+        OnlineCounselorVO onlineCounselorVO = OnlineCounselorVO.builder()
+                .onlineCounselors(onlineCounselorList)
+                .total(onlineCounselorList.size())
+                .build();
+
+        return Result.success(onlineCounselorVO);
     }
 
     @GetMapping("/history")
