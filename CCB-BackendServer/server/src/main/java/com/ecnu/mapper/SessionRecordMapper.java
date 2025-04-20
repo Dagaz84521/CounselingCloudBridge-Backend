@@ -17,12 +17,7 @@ public interface SessionRecordMapper {
     @AutoFill(OperationType.CREATE)
     int insert(SessionRecord record);
 
-    @Select({
-            "SELECT * FROM session_records",
-            "WHERE session_id = #{sessionId}",
-            "ORDER BY created_at DESC",
-            "LIMIT #{size} OFFSET #{offset}"
-    })
+
     List<SessionRecord> selectBySessionId(@Param("sessionId") Long sessionId, @Param("offset") Long offset, @Param("size") Long size);
 
 
