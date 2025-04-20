@@ -30,16 +30,20 @@ public class AdminController {
 
     @GetMapping("/onlinecounselor")
     @ApiOperation(value = "在线咨询师")
-    public Result<List<OnlineCounselor>> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
-        List<OnlineCounselor> onlineCounselorList = adminService.getOnlineCounselor(onlineCounselorDTO);
-        return Result.success(onlineCounselorList);
+    public Result<OnlineCounselorVO> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
+
+        OnlineCounselorVO onlineCounselorVO = adminService.getOnlineCounselor(onlineCounselorDTO);
+
+        return Result.success(onlineCounselorVO);
     }
 
     @GetMapping("/onlinesupervisor")
     @ApiOperation(value = "在线督导")
-    public Result<List<OnlineSupervisor>> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
-        List<OnlineSupervisor> onlineSupervisorList = adminService.getOnlineSupervisor(onlineCounselorDTO);
-        return Result.success(onlineSupervisorList);
+    public Result<OnlineSupervisorVO> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
+
+        OnlineSupervisorVO onlineSupervisorVO = adminService.getOnlineSupervisor(onlineCounselorDTO);
+
+        return Result.success(onlineSupervisorVO);
     }
 
     @GetMapping("/schedule")

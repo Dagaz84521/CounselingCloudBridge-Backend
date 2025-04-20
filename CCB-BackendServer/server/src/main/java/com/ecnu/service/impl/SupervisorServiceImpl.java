@@ -91,10 +91,16 @@ public class SupervisorServiceImpl implements SupervisorService {
         return requestList;
     }
 
-    public List<OnlineCounselor> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
+    public OnlineCounselorVO getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
         PageHelper.startPage(onlineCounselorDTO.getPage(), onlineCounselorDTO.getPagesize());
         Page<OnlineCounselor> page = relationMapper.getOnlineCounselor(BaseContext.getCurrentId());
-        return page.getResult();
+
+        OnlineCounselorVO onlineCounselorVO = OnlineCounselorVO.builder()
+                .onlineCounselors(page.getResult())
+                .total(page.getTotal())
+                .build();
+
+        return onlineCounselorVO;
     }
 
     public SupervisorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO) {

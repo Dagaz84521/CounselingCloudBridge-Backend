@@ -9,7 +9,7 @@ public interface AdminService {
 
     AdminHomeVO getHomeInfo();
 
-    List<OnlineCounselor> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO);
+    OnlineCounselorVO getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO);
 
     List<ScheduleVO> getSchedule();
 
@@ -29,7 +29,7 @@ public interface AdminService {
 
     List<SupervisorListVO> supervisorList();
 
-    List<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO);
+    OnlineSupervisorVO getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO);
 
     CounselorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO);
 

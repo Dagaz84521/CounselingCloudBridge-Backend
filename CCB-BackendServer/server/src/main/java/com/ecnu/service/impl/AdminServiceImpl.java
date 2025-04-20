@@ -63,10 +63,16 @@ public class AdminServiceImpl implements AdminService {
         return adminHomeVO;
     }
 
-    public List<OnlineCounselor> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
+    public OnlineCounselorVO getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO) {
         PageHelper.startPage(onlineCounselorDTO.getPage(), onlineCounselorDTO.getPagesize());
         Page<OnlineCounselor> page = counselorMapper.getOnlineCounselor();
-        return page.getResult();
+
+        OnlineCounselorVO onlineCounselorVO = OnlineCounselorVO.builder()
+                .onlineCounselors(page.getResult())
+                .total(page.getTotal())
+                .build();
+
+        return onlineCounselorVO;
     }
 
     public List<ScheduleVO> getSchedule() {
@@ -239,10 +245,16 @@ public class AdminServiceImpl implements AdminService {
         return supervisorList;
     }
 
-    public List<OnlineSupervisor> getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
+    public OnlineSupervisorVO getOnlineSupervisor(OnlineCounselorDTO onlineCounselorDTO) {
         PageHelper.startPage(onlineCounselorDTO.getPage(), onlineCounselorDTO.getPagesize());
         Page<OnlineSupervisor> page = userMapper.getOnlineSupervisor(onlineCounselorDTO);
-        return page.getResult();
+
+        OnlineSupervisorVO onlineSupervisorVO = OnlineSupervisorVO.builder()
+                .onlineSupervisors(page.getResult())
+                .total(page.getTotal())
+                .build();
+
+        return onlineSupervisorVO;
     }
 
     public CounselorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO) {
