@@ -44,6 +44,7 @@ public class SessionRecordServiceImpl implements SessionRecordService {
 
     private SessionRecordVO entityToVO(SessionRecord message) {
         return SessionRecordVO.builder()
+                .sessionId(message.getSessionId())
                 .content(message.getContent())
                 .senderId(message.getSenderId())
                 .createdAt(message.getCreatedAt())

@@ -72,9 +72,9 @@ public class CounselorController {
      */
     @GetMapping("/session/{sessionid}/{clientid}")
     @ApiOperation(value = "咨询师咨询页面")
-    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid, @RequestParam Long page) {
+    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
         CounselorSessionVO counselorSessionVO = counselorService.getSession(sessionid, clientid);
-        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionid, page, PageConstant.RECORD_HISTORY_PER_PAGE);
+        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionid, 0L, 0L);
         counselorSessionVO.setHistory(records);
         return Result.success(counselorSessionVO);
     }
