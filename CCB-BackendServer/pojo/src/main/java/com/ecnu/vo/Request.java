@@ -16,7 +16,4 @@ public class Request {
     private Long counselorId;
 
     private String realName;
-
-    private Long sessionId;
-
 }
