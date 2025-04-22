@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ecnu.mapper.RequestMapper">
+    <select id="getRequestList" resultType="SupervisionRequest">
+        SELECT * FROM supervision_request
+        WHERE supervisor_id = #{currentId}
+        <if test="status != null and !status.isEmpty()">
+            AND status = #{status}
+        </if>
+    </select>
+</mapper>

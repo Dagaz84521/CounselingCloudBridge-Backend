@@ -79,7 +79,7 @@ public class SupervisorServiceImpl implements SupervisorService {
     }
 
     public List<Request> getRequestList() {
-        List<SupervisionRequest> requests = requestMapper.getRequestList(BaseContext.getCurrentId(), RequestStatusConstant.ACCEPTED);
+        List<SupervisionRequest> requests = requestMapper.getRequestList(BaseContext.getCurrentId(), null);
         List<Request> requestList = new ArrayList<>();
         for (SupervisionRequest supervisionRequest : requests) {
             Request request = new Request();
