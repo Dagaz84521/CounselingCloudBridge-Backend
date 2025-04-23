@@ -17,7 +17,7 @@ public interface SupervisorService {
 
     List<Request> getRequestList();
 
-    List<OnlineCounselor> getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO);
+    OnlineCounselorVO getOnlineCounselor(OnlineCounselorDTO onlineCounselorDTO);
 
     SupervisorHistoryVO getHistory(CounselorHistoryDTO counselorHistoryDTO);
 

@@ -22,6 +22,12 @@ public interface CounselorService {
     List<String> getSchedule();
 
     /**
+     * 获取和咨询师关联的督导ID
+     * @return
+     */
+    List<Long> getSupervisorIds(Long counselorId);
+
+    /**
      * 获取咨询师最近咨询信息
      * @return
      */

@@ -34,7 +34,7 @@ public class SessionRecordServiceImpl implements SessionRecordService {
     public List<SessionRecordVO> getHistoryMessages(Long sessionId, Long page, Long size) {
 
         List<SessionRecord> messages = sessionRecordMapper.selectBySessionId(
-                sessionId, page * size, size
+                sessionId, ( page - 1 ) * size, size
         );
 
         return messages.stream()
@@ -44,6 +44,7 @@ public class SessionRecordServiceImpl implements SessionRecordService {
 
     private SessionRecordVO entityToVO(SessionRecord message) {
         return SessionRecordVO.builder()
+                .sessionId(message.getSessionId())
                 .content(message.getContent())
                 .senderId(message.getSenderId())
                 .createdAt(message.getCreatedAt())

@@ -13,7 +13,6 @@ import java.util.List;
 @Mapper
 public interface RequestMapper {
 
-    @Select("select * from supervision_request where supervisor_id = #{currentId} and status = #{status}")
     List<SupervisionRequest> getRequestList(Long currentId, String status);
 
     @Select("select count(*) from supervision_request where supervisor_id = #{currentId} and status = #{status}")
@@ -49,7 +48,6 @@ public interface RequestMapper {
             "  <if test='endTime != null'>end_time = #{endTime},</if>",
             "  <if test='requestDetails != null'>request_details = #{requestDetails},</if>",
             "  <if test='status != null'>status = #{status},</if>",
-            // updated_at 由数据库自动更新
             "</set>",
             "WHERE request_id = #{requestId}",
             "</script>"

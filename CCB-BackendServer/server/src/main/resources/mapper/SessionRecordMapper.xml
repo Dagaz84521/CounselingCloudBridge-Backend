@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ecnu.mapper.SessionRecordMapper">
+    <select id="selectBySessionId" resultType="SessionRecord">
+        SELECT * FROM session_records
+        WHERE session_id = #{sessionId}
+        ORDER BY created_at DESC
+        <if test="offset != null and offset >= 0 and size != null and size > 0">
+            LIMIT #{size} OFFSET #{offset}
+        </if>
+    </select>
+</mapper>

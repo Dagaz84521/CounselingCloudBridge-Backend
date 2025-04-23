@@ -23,4 +23,5 @@ public class CounselorHomeVO implements Serializable {
 
     private List<Session> sessionList;
 
+    private List<Long> supervisorIds;
 }

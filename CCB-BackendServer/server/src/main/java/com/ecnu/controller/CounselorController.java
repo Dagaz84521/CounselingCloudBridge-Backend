@@ -1,6 +1,7 @@
 package com.ecnu.controller;
 
 import com.ecnu.constant.PageConstant;
+import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.result.Result;
@@ -39,11 +40,13 @@ public class CounselorController {
         List<String> schedule = counselorService.getSchedule();
         List<RecentSession> recentSessions = counselorService.getRecentSessions();
         List<Session> sessionList = counselorService.getSessionList();
+        List<Long> supervisorIds = counselorService.getSupervisorIds(BaseContext.getCurrentId());
         CounselorHomeVO counselorHomeVO = new CounselorHomeVO().builder()
                 .counselorInfo(counselorInfo)
                 .schedule(schedule)
                 .recentSessions(recentSessions)
                 .sessionList(sessionList)
+                .supervisorIds(supervisorIds)
                 .build();
         return Result.success(counselorHomeVO);
     }
@@ -69,9 +72,9 @@ public class CounselorController {
      */
     @GetMapping("/session/{sessionid}/{clientid}")
     @ApiOperation(value = "咨询师咨询页面")
-    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid, @RequestParam Long page) {
+    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
         CounselorSessionVO counselorSessionVO = counselorService.getSession(sessionid, clientid);
-        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionid, page, PageConstant.RECORD_HISTORY_PER_PAGE);
+        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionid, 0L, 0L);
         counselorSessionVO.setHistory(records);
         return Result.success(counselorSessionVO);
     }
@@ -122,6 +125,7 @@ public class CounselorController {
     @ApiOperation(value = "更新咨询师简介")
     public Result updateBio(@RequestBody String bio) {
         counselorService.updateBio(bio);
+        return Result.success();
     }
     /**
      * 咨询师向督导发起求助

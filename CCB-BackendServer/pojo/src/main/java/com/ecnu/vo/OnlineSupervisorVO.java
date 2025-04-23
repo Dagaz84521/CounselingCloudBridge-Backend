@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Request {
+public class OnlineSupervisorVO implements Serializable {
 
-    private Long requestId;
+    List<OnlineSupervisor> onlineSupervisors;
 
-    private Long counselorId;
-
-    private String realName;
+    Long total;
 }
