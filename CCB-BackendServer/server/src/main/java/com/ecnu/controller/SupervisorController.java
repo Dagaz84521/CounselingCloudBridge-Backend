@@ -5,6 +5,7 @@ import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
 import com.ecnu.exception.IllegalRequestIDException;
 import com.ecnu.result.Result;
+import com.ecnu.service.RequestRecordService;
 import com.ecnu.service.SupervisorService;
 import com.ecnu.utils.SmsUtil;
 import com.ecnu.vo.*;
@@ -27,6 +28,9 @@ public class SupervisorController {
 
     @Autowired
     private SupervisorService supervisorService;
+
+    @Autowired
+    private RequestRecordService requestRecordService;
 
     @GetMapping("/home")
     @ApiOperation(value = "督导首页")
@@ -58,6 +62,18 @@ public class SupervisorController {
     public Result<SupervisorHistoryVO> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
         SupervisorHistoryVO supervisorHistoryVO = supervisorService.getHistory(counselorHistoryDTO);
         return Result.success(supervisorHistoryVO);
+    }
+
+    /**
+     * 求助历史聊天记录
+     * @param requestId
+     * @return
+     */
+    @GetMapping("/request/history")
+    @ApiOperation(value = "获取具体某个会话的历史记录")
+    public Result<List<RequestRecordVO>> getHistory(@RequestParam("requestId") Long requestId) {
+        List<RequestRecordVO> record = requestRecordService.getHistoryMessages(requestId, 0L, 0L);
+        return Result.success(record);
     }
 
     @PostMapping("/request/accept/{counselorId}")

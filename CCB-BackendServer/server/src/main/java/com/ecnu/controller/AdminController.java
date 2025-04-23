@@ -3,6 +3,8 @@ package com.ecnu.controller;
 import com.ecnu.dto.*;
 import com.ecnu.result.Result;
 import com.ecnu.service.AdminService;
+import com.ecnu.service.SessionRecordService;
+import com.ecnu.service.SessionsService;
 import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +22,9 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private SessionRecordService sessionRecordService;
 
     @GetMapping("/home")
     @ApiOperation(value = "管理员首页")
@@ -113,8 +118,17 @@ public class AdminController {
     @GetMapping("/history")
     @ApiOperation(value = "管理员查询咨询师历史记录")
     public Result<CounselorHistoryVO> getHistory(CounselorHistoryDTO counselorHistoryDTO) {
+
         CounselorHistoryVO counselorHistoryVO = adminService.getHistory(counselorHistoryDTO);
         return Result.success(counselorHistoryVO);
+    }
+
+
+    @GetMapping("/session/history")
+    @ApiOperation(value = "管理员查询咨询师具体会话中历史记录")
+    public Result<List<SessionRecordVO>> getHistory(@RequestParam("sessionId") Long sessionId) {
+        List<SessionRecordVO> record = sessionRecordService.getHistoryMessages(sessionId, 0L, 0L);
+        return Result.success(record);
     }
 
     @GetMapping("/todaySessionVariation")
