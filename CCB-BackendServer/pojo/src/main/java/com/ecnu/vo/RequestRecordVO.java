@@ -15,7 +15,7 @@ public class RequestRecordVO {
 
     private Long requestId;
 
-    private Long senderId;
+    private String senderName;
 
     private String content;
 

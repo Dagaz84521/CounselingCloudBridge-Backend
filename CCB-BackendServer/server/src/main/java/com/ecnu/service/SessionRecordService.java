@@ -6,11 +6,6 @@ import com.ecnu.vo.SessionRecordVO;
 import java.util.List;
 
 public interface SessionRecordService {
-    /**
-     * 给对应的Session插入会话记录，并推送信息
-     * @return SessionRecordVO
-     */
-    SessionRecordVO insertSessionRecord(MessageDTO dto);
 
     /**
      * 获取会话历史记录
