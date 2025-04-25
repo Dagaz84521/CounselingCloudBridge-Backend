@@ -3,7 +3,10 @@ package com.ecnu.controller;
 import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
+import com.ecnu.entity.User;
 import com.ecnu.exception.IllegalRequestIDException;
+import com.ecnu.mapper.RequestMapper;
+import com.ecnu.mapper.UserMapper;
 import com.ecnu.result.Result;
 import com.ecnu.service.RequestRecordService;
 import com.ecnu.service.SupervisorService;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -31,6 +35,11 @@ public class SupervisorController {
 
     @Autowired
     private RequestRecordService requestRecordService;
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private RequestMapper requestMapper;
 
     @GetMapping("/home")
     @ApiOperation(value = "督导首页")
@@ -71,9 +80,21 @@ public class SupervisorController {
      */
     @GetMapping("/request/history")
     @ApiOperation(value = "获取具体某个会话的历史记录")
-    public Result<List<RequestRecordVO>> getHistory(@RequestParam("requestId") Long requestId) {
-        List<RequestRecordVO> record = requestRecordService.getHistoryMessages(requestId, 0L, 0L);
-        return Result.success(record);
+    public Result<RequestDetailVO> getHistory(@RequestParam("requestId") Long requestId) {
+        User supervisor = userMapper.getById(BaseContext.getCurrentId());
+
+        List<RequestRecordVO> records = requestRecordService.getHistoryMessages(requestId, 0L, 0L);
+
+        LocalDateTime startTime = requestMapper.getById(requestId).getStartTime();
+
+        RequestDetailVO requestDetailVO = RequestDetailVO.builder()
+                .realName(supervisor.getRealName())
+                .phoneNumber(supervisor.getPhoneNumber())
+                .avatarUrl(supervisor.getAvatarUrl())
+                .startTime(startTime)
+                .records(records).build();
+
+        return Result.success(requestDetailVO);
     }
 
     @PostMapping("/request/accept/{counselorId}")
@@ -94,4 +115,5 @@ public class SupervisorController {
         }
         return Result.success();
     }
+
 }
