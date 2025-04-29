@@ -146,9 +146,10 @@ public class CounselorController {
      * */
     @PostMapping("/request/start/{supervisorId}")
     @ApiOperation(value = "咨询师向督导发起求助")
-    public Result<Long> startRequest(@PathVariable Long supervisorId) {
+    public Result<RequestStartVO> startRequest(@PathVariable Long supervisorId, @RequestParam Long sessionId) {
         Long requestId = counselorService.addRequest(supervisorId);
-        return Result.success(requestId);
+        RequestStartVO requestStartVO = RequestStartVO.builder().requestId(requestId).sessionId(sessionId).build();
+        return Result.success(requestStartVO);
     }
 
     /**

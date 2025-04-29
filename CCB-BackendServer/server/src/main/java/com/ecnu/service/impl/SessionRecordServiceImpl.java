@@ -64,7 +64,7 @@ public class SessionRecordServiceImpl implements SessionRecordService {
 
     private SessionRecord dtoToEntity(MessageDTO message) {
         return SessionRecord.builder()
-                .sessionId(message.getMessageId())
+                .sessionId(message.getRoomId())
                 .senderId(message.getSenderId())
                 .receiverId(message.getReceiverId())
                 .content(message.getContent())
