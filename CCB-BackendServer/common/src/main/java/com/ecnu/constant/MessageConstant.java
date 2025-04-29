@@ -13,4 +13,5 @@ public class MessageConstant {
     public static final String USER_NOT_LOGIN = "用户未登录";
     public static final String ACCOUNT_HAS_EXISTED = "账号已存在";
     public static final String UPLOAD_FAILED = "文件上传失败";
+    public static final String CODE_ERROR = "验证码错误";
 }

@@ -26,4 +26,6 @@ public class UserRegisterDTO implements Serializable {
     private String occupation;
 
     private String avatarUrl;
+
+    private String code;
 }

@@ -4,7 +4,6 @@ import com.ecnu.dto.ResetPasswordDTO;
 import com.ecnu.dto.UserLoginDTO;
 import com.ecnu.dto.UserRegisterDTO;
 import com.ecnu.entity.User;
-import com.ecnu.vo.UserInfoVO;
 
 public interface UserService {
 
@@ -48,5 +47,5 @@ public interface UserService {
 
     void logout();
 
-    void resetPhoneNumber(String phoneNumber);
+    void resetPhoneNumber(String phoneNumber, String code);
 }
