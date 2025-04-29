@@ -93,7 +93,7 @@ public interface CounselorService {
      * 咨询师向督导发起求助
      * @param supervisorId
      */
-    Long addRequest(Long supervisorId);
+    Long addRequest(Long supervisorId, Long sessionId);
 
 
     /**

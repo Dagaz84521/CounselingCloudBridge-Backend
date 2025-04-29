@@ -218,7 +218,7 @@ public class CounselorServiceImpl implements CounselorService {
         counselorMapper.updateBio(BaseContext.getCurrentId(), bio);
     }
     @Override
-    public Long addRequest(Long supervisorId) {
+    public Long addRequest(Long supervisorId, Long sessionId) {
 
         Long relationId = relationMapper.getByParticipationId(supervisorId, BaseContext.getCurrentId()).getRelationId();
 
@@ -226,6 +226,7 @@ public class CounselorServiceImpl implements CounselorService {
                 .relationId(relationId)
                 .counselorId(BaseContext.getCurrentId())
                 .supervisorId(supervisorId)
+                .sessionId(sessionId)
                 .startTime(LocalDateTime.now())
                 .status("pending")
                 .build();

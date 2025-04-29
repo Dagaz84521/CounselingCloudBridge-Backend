@@ -13,6 +13,8 @@ public class Request {
 
     private Long requestId;
 
+    private Long sessionId;
+
     private Long counselorId;
 
     private String realName;
