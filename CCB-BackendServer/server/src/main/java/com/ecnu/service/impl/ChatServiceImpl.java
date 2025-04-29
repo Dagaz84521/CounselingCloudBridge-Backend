@@ -48,7 +48,7 @@ public class ChatServiceImpl implements ChatService {
 
         SessionRecord sessionRecord = objectMapper.convertValue(dto, SessionRecord.class);
 
-        sessionRecord.setSessionId(dto.getMessageId());
+        sessionRecord.setSessionId(dto.getRoomId());
 
         sessionRecord.setCreatedAt(LocalDateTime.now());
 
@@ -73,7 +73,7 @@ public class ChatServiceImpl implements ChatService {
 
         RequestRecord requestRecord = objectMapper.convertValue(dto, RequestRecord.class);
 
-        requestRecord.setRequestId(dto.getMessageId());
+        requestRecord.setRequestId(dto.getRoomId());
 
         requestRecord.setCreatedAt(LocalDateTime.now());
 

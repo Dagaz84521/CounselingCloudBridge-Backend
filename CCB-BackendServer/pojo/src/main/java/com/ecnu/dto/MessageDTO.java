@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MessageDTO implements Serializable {
 
-    private Long messageId;
+    private Long roomId;
 
     private Long senderId;
 
