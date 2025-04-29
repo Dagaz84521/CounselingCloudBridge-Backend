@@ -76,7 +76,9 @@ public class UserServiceImpl implements UserService {
      * @param resetPasswordDTO
      */
     public void resetPassword(ResetPasswordDTO resetPasswordDTO) {
-
+//        User user = userMapper.getById(BaseContext.getCurrentId());
+//        user.setPasswordHash(resetPasswordDTO.getPasswordHash());
+//        userMapper.update(user);
     }
 
     /**
@@ -109,5 +111,12 @@ public class UserServiceImpl implements UserService {
 
     public void logout() {
         userMapper.logout(BaseContext.getCurrentId());
+    }
+
+    @Override
+    public void resetPhoneNumber(String phoneNumber) {
+        User user = userMapper.getById(BaseContext.getCurrentId());
+        user.setPhoneNumber(phoneNumber);
+        userMapper.update(user);
     }
 }

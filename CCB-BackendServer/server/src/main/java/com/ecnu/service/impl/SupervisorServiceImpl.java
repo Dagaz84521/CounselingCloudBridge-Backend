@@ -5,10 +5,14 @@ import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
 import com.ecnu.dto.SupervisorTodayRequestDTO;
+import com.ecnu.entity.Session;
 import com.ecnu.entity.SupervisionRequest;
 import com.ecnu.entity.User;
 import com.ecnu.exception.IllegalRequestIDException;
 import com.ecnu.mapper.*;
+import com.ecnu.service.CounselorService;
+import com.ecnu.service.RequestRecordService;
+import com.ecnu.service.SessionRecordService;
 import com.ecnu.service.SupervisorService;
 import com.ecnu.vo.*;
 import com.github.pagehelper.Page;
@@ -17,7 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +36,17 @@ public class SupervisorServiceImpl implements SupervisorService {
     private ScheduleMapper scheduleMapper;
     @Autowired
     private RelationMapper relationMapper;
+
+    @Autowired
+    private RequestRecordService requestRecordService;
+
+    @Autowired
+    private CounselorService counselorService;
+
+    @Autowired
+    private SessionRecordService sessionRecordService;
+    @Autowired
+    private SessionsMapper sessionsMapper;
 
     public SupervisorInfo getSupervisorInfo() {
         User user = userMapper.getById(BaseContext.getCurrentId());
@@ -138,5 +153,42 @@ public class SupervisorServiceImpl implements SupervisorService {
         }
         supervisionRequest.setStatus(RequestStatusConstant.COMPLETED);
         requestMapper.update(supervisionRequest);
+    }
+
+    @Override
+    public RequestDetailVO getRequest(Long requestId) {
+        SupervisionRequest request = requestMapper.getById(requestId);
+
+        Long counselorId = request.getCounselorId();
+
+        User counselor = userMapper.getById(counselorId);
+
+        List<RequestRecordVO> records = requestRecordService.getHistoryMessages(requestId, 0L, 0L);
+
+        LocalDateTime startTime = requestMapper.getById(requestId).getStartTime();
+
+        RequestDetailVO requestDetailVO = RequestDetailVO.builder()
+                .realName(counselor.getRealName())
+                .phoneNumber(counselor.getPhoneNumber())
+                .avatarUrl(counselor.getAvatarUrl())
+                .startTime(startTime)
+                .records(records).build();
+        return requestDetailVO;
+    }
+
+    @Override
+    public CounselorSessionVO getCounselorSession(Long sessionId) {
+
+        Session session = sessionsMapper.getById(sessionId);
+
+        Long clientId = session.getClientId();
+
+        CounselorSessionVO counselorSessionVO = counselorService.getSession(sessionId, clientId);
+
+        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionId, 0L, 0L);
+
+        counselorSessionVO.setHistory(records);
+
+        return counselorSessionVO;
     }
 }

@@ -41,6 +41,7 @@ public class RequestRecordServiceImpl implements RequestRecordService {
             String senderName = (Objects.equals(record.getSenderId(), user1.getUserId())) ? user1.getRealName() : user2.getRealName();
             RequestRecordVO vo = RequestRecordVO.builder()
                     .requestId(record.getRequestId())
+                    .senderId(record.getSenderId())
                     .content(record.getContent())
                     .createdAt(record.getCreatedAt())
                     .senderName(senderName)

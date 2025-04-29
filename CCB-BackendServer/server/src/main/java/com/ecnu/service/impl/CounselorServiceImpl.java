@@ -172,11 +172,15 @@ public class CounselorServiceImpl implements CounselorService {
     public CounselorSessionVO getSession(Long sessionid, Long clientid) {
         User user = userMapper.getById(clientid);
         Session session = sessionsMapper.getById(sessionid);
-        CounselorSessionVO counselorSessionVO = new CounselorSessionVO().builder()
+        CounselorSessionVO counselorSessionVO = CounselorSessionVO.builder()
                 .realName(user.getRealName())
                 .phoneNumber(user.getPhoneNumber())
                 .avatarUrl(user.getAvatarUrl())
                 .startTime(session.getStartTime())
+                .endTime(session.getEndTime())
+                .status(session.getStatus())
+                .type(session.getType())
+                .advice(session.getAdvice())
                 .rating(session.getRating())
                 .build();
         return counselorSessionVO;

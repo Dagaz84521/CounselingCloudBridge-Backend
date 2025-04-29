@@ -3,6 +3,7 @@ package com.ecnu.controller;
 import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
+import com.ecnu.entity.SupervisionRequest;
 import com.ecnu.entity.User;
 import com.ecnu.exception.IllegalRequestIDException;
 import com.ecnu.mapper.RequestMapper;
@@ -80,21 +81,22 @@ public class SupervisorController {
      */
     @GetMapping("/request/history")
     @ApiOperation(value = "获取具体某个会话的历史记录")
-    public Result<RequestDetailVO> getHistory(@RequestParam("requestId") Long requestId) {
-        User supervisor = userMapper.getById(BaseContext.getCurrentId());
+    public Result<SupervisorRequestPageVO> getHistory(@RequestParam(name = "requestId", required = false) Long requestId, @RequestParam(name = "sessionId", required = false) Long sessionId) {
+        RequestDetailVO requestDetailVO = null;
+        CounselorSessionVO counselorSessionVO = null;
+        if (requestId != null) {
+            requestDetailVO = supervisorService.getRequest(requestId);
+        }
 
-        List<RequestRecordVO> records = requestRecordService.getHistoryMessages(requestId, 0L, 0L);
+        if (sessionId != null) {
+            counselorSessionVO = supervisorService.getCounselorSession(sessionId);
+        }
 
-        LocalDateTime startTime = requestMapper.getById(requestId).getStartTime();
-
-        RequestDetailVO requestDetailVO = RequestDetailVO.builder()
-                .realName(supervisor.getRealName())
-                .phoneNumber(supervisor.getPhoneNumber())
-                .avatarUrl(supervisor.getAvatarUrl())
-                .startTime(startTime)
-                .records(records).build();
-
-        return Result.success(requestDetailVO);
+        SupervisorRequestPageVO supervisorRequestPageVO = SupervisorRequestPageVO.builder()
+                .sessionData(counselorSessionVO)
+                .requestData(requestDetailVO)
+                .build();
+        return Result.success(supervisorRequestPageVO);
     }
 
     @PostMapping("/request/accept/{counselorId}")

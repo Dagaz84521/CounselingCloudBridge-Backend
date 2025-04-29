@@ -97,6 +97,22 @@ public class UserController {
         return Result.success();
     }
 
+
+    /**
+     * 重置手机号
+     * @param phoneNumber
+     * @return
+     */
+    @PutMapping("/phoneNumber")
+    @ApiOperation(value = "重置手机号")
+    public Result resetPassword(@RequestParam String phoneNumber) {
+        log.info("重置手机号:{}", phoneNumber);
+
+        userService.resetPhoneNumber(phoneNumber);
+
+        return Result.success();
+    }
+
     /**
      * 获取验证码
      * @param phoneNumber

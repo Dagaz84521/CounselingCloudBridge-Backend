@@ -16,6 +16,8 @@ public class SessionRecordVO implements Serializable {
 
     private Long sessionId;
 
+    private Long senderId;
+
     private String senderName;
 
     private String content;

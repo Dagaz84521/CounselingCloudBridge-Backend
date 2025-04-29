@@ -24,4 +24,8 @@ public interface SupervisorService {
     Long acceptRequest(Long supervisorId, Long counselorId);
 
     void endRequest(Long requestId);
+
+    RequestDetailVO getRequest(Long requestId);
+
+    CounselorSessionVO getCounselorSession(Long sessionId);
 }
