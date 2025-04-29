@@ -15,7 +15,7 @@ import java.util.List;
 public interface RequestRecordMapper {
 
     @Insert("INSERT INTO request_records VALUES (#{requestId}, #{senderId}, #{receiverId}, #{content})")
-    @AutoFill(OperationType.BOTH)
+    @AutoFill(OperationType.CREATE)
     void insert(RequestRecord requestRecord);
 
 
