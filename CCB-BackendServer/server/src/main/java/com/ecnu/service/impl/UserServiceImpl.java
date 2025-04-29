@@ -125,7 +125,16 @@ public class UserServiceImpl implements UserService {
         if(!code.equals(CodeConstant.CODE)) {
             throw new CodeErrorException(MessageConstant.CODE_ERROR);
         }
-        User user = userMapper.getById(BaseContext.getCurrentId());
+
+        // 2. 检查手机号是否已存在（排除当前用户自己）
+        Long currentUserId = BaseContext.getCurrentId();
+        User existingUser = userMapper.getByPhoneNumber(phoneNumber);
+        if(existingUser != null && !existingUser.getUserId().equals(currentUserId)) {
+            throw new PhoneNumberHasExistedException(MessageConstant.PHONE_NUMBER_EXISTS);
+        }
+
+        // 3. 更新手机号
+        User user = userMapper.getById(currentUserId);
         user.setPhoneNumber(phoneNumber);
         userMapper.update(user);
     }

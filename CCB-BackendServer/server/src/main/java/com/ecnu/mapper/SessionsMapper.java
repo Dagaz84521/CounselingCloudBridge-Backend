@@ -102,6 +102,9 @@ public interface SessionsMapper {
     @Select("SELECT * FROM sessions WHERE client_id = #{userId} OR counselor_id = #{userId}")
     List<Session>  getByParticipantId(Long userId);
 
+    @Select("SELECT * FROM sessions WHERE client_id = #{clientId}")
+    List<Session>  getByClientId(Long clientId);
+
     /**
      * 获取指定咨询师最早的待处理会话
      * @param counselorId 咨询师ID
