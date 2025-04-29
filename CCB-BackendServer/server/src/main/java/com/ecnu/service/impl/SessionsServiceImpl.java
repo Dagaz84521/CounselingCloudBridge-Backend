@@ -122,6 +122,16 @@ public class SessionsServiceImpl implements SessionsService {
                 .map(Session::getSessionId)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Long> getAllSession(Long userId) {
+        List<Session> sessions = sessionMapper.getByClientId(userId);
+        return sessions.stream()
+                .filter(Objects::nonNull)
+                .map(Session::getSessionId)
+                .collect(Collectors.toList());
+    }
+
     private boolean isParticipant(Session session, Long userId) {
         return userId.equals(session.getClientId()) || userId.equals(session.getCounselorId());
     }

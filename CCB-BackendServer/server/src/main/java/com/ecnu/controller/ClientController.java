@@ -128,6 +128,21 @@ public class ClientController {
         return Result.success(sessionIds);
     }
 
+    /**
+     * 获取当前用户对应的活跃会话
+     * @param
+     * @return
+     */
+    @PostMapping("/session/getAll")
+    @ApiOperation(value = "获取当前用户所有的会话")
+    public Result<List<Long>> getAllSessions(
+            @RequestParam("userId") Long userId) {
+        log.info("客户 {} 获取所有会话", userId);
+        List<Long> sessionIds = sessionsService.getAllSession(userId);
+        return Result.success(sessionIds);
+    }
+
+
     @GetMapping("/counselor/{counselorId}")
     @ApiOperation(value = "查看咨询师详情")
     public Result<ClientCounselorDetailVO> getCounselorDetail(@PathVariable("counselorId") Long counselorId) {

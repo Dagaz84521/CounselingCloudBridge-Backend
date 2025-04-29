@@ -24,4 +24,5 @@ public interface SessionsService {
 
     List<Long> getRelatedSession(Long userId);
 
+    List<Long> getAllSession(Long userId);
 }
