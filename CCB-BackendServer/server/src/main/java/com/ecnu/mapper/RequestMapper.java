@@ -48,6 +48,7 @@ public interface RequestMapper {
             "  <if test='endTime != null'>end_time = #{endTime},</if>",
             "  <if test='requestDetails != null'>request_details = #{requestDetails},</if>",
             "  <if test='status != null'>status = #{status},</if>",
+            "  <if test='sessionId != null'>session_id = #{sessionId},</if>",
             "</set>",
             "WHERE request_id = #{requestId}",
             "</script>"
@@ -67,9 +68,9 @@ public interface RequestMapper {
      */
     @Insert({
             "INSERT INTO supervision_request (",
-            "  supervisor_id, counselor_id, relation_id, start_time, request_details, status",
+            "  supervisor_id, counselor_id, relation_id, session_id, start_time, request_details, status",
             ") VALUES (",
-            "  #{supervisorId}, #{counselorId}, #{relationId}, #{startTime},  #{requestDetails}, #{status}",
+            "  #{supervisorId}, #{counselorId}, #{relationId}, #{sessionId}, #{startTime},  #{requestDetails}, #{status}",
             ")"
     })
     @Options(useGeneratedKeys = true, keyProperty = "requestId", keyColumn = "request_id")
