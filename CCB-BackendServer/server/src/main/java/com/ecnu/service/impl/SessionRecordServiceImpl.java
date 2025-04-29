@@ -52,6 +52,7 @@ public class SessionRecordServiceImpl implements SessionRecordService {
             SessionRecordVO vo = SessionRecordVO.builder()
                     .sessionId(message.getSessionId())
                     .content(message.getContent())
+                    .senderId(message.getSenderId())
                     .senderName(senderName)
                     .createdAt(message.getCreatedAt())
                     .build();

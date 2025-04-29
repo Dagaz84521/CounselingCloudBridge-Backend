@@ -49,7 +49,6 @@ public interface UserMapper {
      * 更新用户信息
      * @param user
      */
-    @Update("update users set real_name = #{realName}, age = #{age}, gender = #{gender}, occupation = #{occupation}, avatar_url = #{avatarUrl} where user_id = #{userId}")
     @AutoFill(OperationType.UPDATE)
     void update(User user);
 

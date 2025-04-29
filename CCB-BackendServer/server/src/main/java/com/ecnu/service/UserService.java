@@ -47,4 +47,6 @@ public interface UserService {
     void getCode(String phoneNumber);
 
     void logout();
+
+    void resetPhoneNumber(String phoneNumber);
 }
