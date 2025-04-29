@@ -3,8 +3,13 @@ package com.ecnu.controller;
 import com.ecnu.context.BaseContext;
 import com.ecnu.dto.CounselorHistoryDTO;
 import com.ecnu.dto.OnlineCounselorDTO;
+import com.ecnu.entity.SupervisionRequest;
+import com.ecnu.entity.User;
 import com.ecnu.exception.IllegalRequestIDException;
+import com.ecnu.mapper.RequestMapper;
+import com.ecnu.mapper.UserMapper;
 import com.ecnu.result.Result;
+import com.ecnu.service.RequestRecordService;
 import com.ecnu.service.SupervisorService;
 import com.ecnu.utils.SmsUtil;
 import com.ecnu.vo.*;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -27,6 +33,14 @@ public class SupervisorController {
 
     @Autowired
     private SupervisorService supervisorService;
+
+    @Autowired
+    private RequestRecordService requestRecordService;
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private RequestMapper requestMapper;
 
     @GetMapping("/home")
     @ApiOperation(value = "督导首页")
@@ -60,6 +74,31 @@ public class SupervisorController {
         return Result.success(supervisorHistoryVO);
     }
 
+    /**
+     * 求助历史聊天记录
+     * @param requestId
+     * @return
+     */
+    @GetMapping("/request/history")
+    @ApiOperation(value = "获取具体某个会话的历史记录")
+    public Result<SupervisorRequestPageVO> getHistory(@RequestParam(name = "requestId", required = false) Long requestId, @RequestParam(name = "sessionId", required = false) Long sessionId) {
+        RequestDetailVO requestDetailVO = null;
+        CounselorSessionVO counselorSessionVO = null;
+        if (requestId != null) {
+            requestDetailVO = supervisorService.getRequest(requestId);
+        }
+
+        if (sessionId != null) {
+            counselorSessionVO = supervisorService.getCounselorSession(sessionId);
+        }
+
+        SupervisorRequestPageVO supervisorRequestPageVO = SupervisorRequestPageVO.builder()
+                .sessionData(counselorSessionVO)
+                .requestData(requestDetailVO)
+                .build();
+        return Result.success(supervisorRequestPageVO);
+    }
+
     @PostMapping("/request/accept/{counselorId}")
     public Result<Long> acceptRequest(@PathVariable("counselorId") Long counselorId) {
         Long requestId = supervisorService.acceptRequest(BaseContext.getCurrentId(), counselorId);
@@ -78,4 +117,5 @@ public class SupervisorController {
         }
         return Result.success();
     }
+
 }

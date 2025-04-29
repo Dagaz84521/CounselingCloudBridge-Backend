@@ -6,20 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestRecordVO {
+public class RequestDetailVO {
 
-    private Long requestId;
+    private String realName;
 
-    private Long senderId;
+    private String phoneNumber;
 
-    private String senderName;
+    private String avatarUrl;
 
-    private String content;
+    private LocalDateTime startTime;
 
-    private LocalDateTime createdAt;
+    private List<RequestRecordVO> records;
 }

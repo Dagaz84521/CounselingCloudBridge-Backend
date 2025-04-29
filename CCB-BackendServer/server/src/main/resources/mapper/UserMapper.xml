@@ -15,4 +15,43 @@
         from users
         where user_type = 'supervisor' and status = 'active'
     </select>
+    <update id="update" parameterType="com.ecnu.entity.User">
+        update users
+        <set>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="realName != null and realName != ''">
+                real_name = #{realName},
+            </if>
+            <if test="passwordHash != null and passwordHash != ''">
+                password_hash = #{passwordHash},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="gender != null and gender != ''">
+                gender = #{gender},
+            </if>
+            <if test="occupation != null and occupation != ''">
+                occupation = #{occupation},
+            </if>
+            <if test="userType != null and userType != ''">
+                user_type = #{userType},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="avatarUrl != null and avatarUrl != ''">
+                avatar_url = #{avatarUrl},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt},
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
 </mapper>

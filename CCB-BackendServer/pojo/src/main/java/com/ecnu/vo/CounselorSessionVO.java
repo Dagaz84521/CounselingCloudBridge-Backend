@@ -23,6 +23,14 @@ public class CounselorSessionVO implements Serializable {
 
     private LocalDateTime startTime;
 
+    private LocalDateTime endTime;
+
+    private String status;
+
+    private String type;
+
+    private String advice;
+
     private Integer rating;
 
     private List<SessionRecordVO> history;

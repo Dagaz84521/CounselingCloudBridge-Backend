@@ -65,6 +65,18 @@ public class CounselorController {
     }
 
     /**
+     * 会话历史聊天记录
+     * @param sessionId
+     * @return
+     */
+    @GetMapping("/session/history")
+    @ApiOperation(value = "获取具体某个会话的历史记录")
+    public Result<List<SessionRecordVO>> getHistory(@RequestParam("sessionId") Long sessionId) {
+        List<SessionRecordVO> record = sessionRecordService.getHistoryMessages(sessionId, 0L, 0L);
+        return Result.success(record);
+    }
+
+    /**
      * 咨询师咨询页面
      * @param sessionid
      * @param clientid

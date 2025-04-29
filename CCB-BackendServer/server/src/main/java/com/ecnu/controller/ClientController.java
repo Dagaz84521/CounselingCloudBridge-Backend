@@ -4,10 +4,12 @@ import com.ecnu.dto.ClientCounselorDTO;
 import com.ecnu.entity.Session;
 import com.ecnu.result.Result;
 import com.ecnu.service.ClientService;
+import com.ecnu.service.SessionRecordService;
 import com.ecnu.service.SessionsService;
 import com.ecnu.vo.ClientCounselorDetailVO;
 import com.ecnu.vo.ClientHomeVO;
 import com.ecnu.vo.ClientSessionVO;
+import com.ecnu.vo.SessionRecordVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,9 @@ public class ClientController {
 
     @Autowired
     private SessionsService sessionsService;
+
+    @Autowired
+    private SessionRecordService sessionRecordService;
 
 
 
@@ -64,6 +69,16 @@ public class ClientController {
         ClientSessionVO clientSessionVO = clientService.getSession();
 
         return Result.success(clientSessionVO);
+    }
+
+
+    @GetMapping("/session/history")
+    @ApiOperation(value = "客户咨询页面")
+    public Result<List<SessionRecordVO>> getSession(@RequestParam("sessionId") Long sessionId) {
+
+        List<SessionRecordVO> record = sessionRecordService.getHistoryMessages(sessionId, 0L, 0L);
+
+        return Result.success(record);
     }
 
 

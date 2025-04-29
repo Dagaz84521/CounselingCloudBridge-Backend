@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ecnu.mapper.RequestRecordMapper">
+    <select id="selectByRequestId" resultType="RequestRecord">
+        SELECT * FROM request_records
+        WHERE request_id = #{requestId}
+        ORDER BY created_at DESC
+        <if test="offset != null and offset >= 0 and size != null and size > 0">
+            LIMIT #{size} OFFSET #{offset}
+        </if>
+    </select>
+</mapper>
