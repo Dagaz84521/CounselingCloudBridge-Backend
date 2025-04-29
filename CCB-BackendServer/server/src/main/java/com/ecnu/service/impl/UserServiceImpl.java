@@ -76,9 +76,9 @@ public class UserServiceImpl implements UserService {
      * @param resetPasswordDTO
      */
     public void resetPassword(ResetPasswordDTO resetPasswordDTO) {
-//        User user = userMapper.getById(BaseContext.getCurrentId());
-//        user.setPasswordHash(resetPasswordDTO.getPasswordHash());
-//        userMapper.update(user);
+        User user = userMapper.getByPhoneNumber(resetPasswordDTO.getPhoneNumber());
+        user.setPasswordHash(resetPasswordDTO.getPasswordHash());
+        userMapper.update(user);
     }
 
     /**
