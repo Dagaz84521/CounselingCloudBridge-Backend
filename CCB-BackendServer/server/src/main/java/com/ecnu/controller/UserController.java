@@ -100,15 +100,15 @@ public class UserController {
 
     /**
      * 重置手机号
-     * @param phoneNumber
+     * @param resetPhoneNumberDTO
      * @return
      */
     @PutMapping("/phoneNumber")
     @ApiOperation(value = "重置手机号")
-    public Result resetPassword(@RequestParam String phoneNumber) {
-        log.info("重置手机号:{}", phoneNumber);
+    public Result resetPassword(@RequestBody HashMap<String, String> resetPhoneNumberDTO) {
+        log.info("重置手机号:{}", resetPhoneNumberDTO.get("phoneNumber"), resetPhoneNumberDTO.get("code"));
 
-        userService.resetPhoneNumber(phoneNumber);
+        userService.resetPhoneNumber(resetPhoneNumberDTO.get("phoneNumber"), resetPhoneNumberDTO.get("code"));
 
         return Result.success();
     }

@@ -1,5 +1,6 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.constant.CodeConstant;
 import com.ecnu.constant.CommonStatusConstant;
 import com.ecnu.constant.MessageConstant;
 import com.ecnu.constant.UserTypeConstant;
@@ -57,6 +58,9 @@ public class UserServiceImpl implements UserService {
      * @param userRegisterDTO
      */
     public void register(UserRegisterDTO userRegisterDTO) {
+        if(!userRegisterDTO.getCode().equals(CodeConstant.CODE)) {
+            throw new CodeErrorException(MessageConstant.CODE_ERROR);
+        }
         String phoneNumber = userRegisterDTO.getPhoneNumber();
         if(userMapper.getByPhoneNumber(phoneNumber) == null) {
             throw new AccountHasExistedException(MessageConstant.ACCOUNT_HAS_EXISTED);
@@ -76,6 +80,9 @@ public class UserServiceImpl implements UserService {
      * @param resetPasswordDTO
      */
     public void resetPassword(ResetPasswordDTO resetPasswordDTO) {
+        if(!resetPasswordDTO.getCode().equals(CodeConstant.CODE)) {
+            throw new CodeErrorException(MessageConstant.CODE_ERROR);
+        }
         User user = userMapper.getByPhoneNumber(resetPasswordDTO.getPhoneNumber());
         user.setPasswordHash(resetPasswordDTO.getPasswordHash());
         userMapper.update(user);
@@ -114,7 +121,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPhoneNumber(String phoneNumber) {
+    public void resetPhoneNumber(String phoneNumber, String code) {
+        if(!code.equals(CodeConstant.CODE)) {
+            throw new CodeErrorException(MessageConstant.CODE_ERROR);
+        }
         User user = userMapper.getById(BaseContext.getCurrentId());
         user.setPhoneNumber(phoneNumber);
         userMapper.update(user);
