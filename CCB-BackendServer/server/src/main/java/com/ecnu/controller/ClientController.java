@@ -6,10 +6,7 @@ import com.ecnu.result.Result;
 import com.ecnu.service.ClientService;
 import com.ecnu.service.SessionRecordService;
 import com.ecnu.service.SessionsService;
-import com.ecnu.vo.ClientCounselorDetailVO;
-import com.ecnu.vo.ClientHomeVO;
-import com.ecnu.vo.ClientSessionVO;
-import com.ecnu.vo.SessionRecordVO;
+import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -135,11 +132,11 @@ public class ClientController {
      */
     @PostMapping("/session/getAll")
     @ApiOperation(value = "获取当前用户所有的会话")
-    public Result<List<Long>> getAllSessions(
+    public Result<List<ClientSessionExportVO>> getAllSessions(
             @RequestParam("userId") Long userId) {
         log.info("客户 {} 获取所有会话", userId);
-        List<Long> sessionIds = sessionsService.getAllSession(userId);
-        return Result.success(sessionIds);
+        List<ClientSessionExportVO> clientSessionExportVOS = sessionsService.getAllSession(userId);
+        return Result.success(clientSessionExportVOS);
     }
 
 

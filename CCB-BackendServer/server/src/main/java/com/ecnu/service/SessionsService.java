@@ -2,6 +2,7 @@ package com.ecnu.service;
 
 import com.ecnu.entity.Session;
 import com.ecnu.entity.User;
+import com.ecnu.vo.ClientSessionExportVO;
 
 import java.util.List;
 
@@ -24,5 +25,5 @@ public interface SessionsService {
 
     List<Long> getRelatedSession(Long userId);
 
-    List<Long> getAllSession(Long userId);
+    List<ClientSessionExportVO> getAllSession(Long userId);
 }
