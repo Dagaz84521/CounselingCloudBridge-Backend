@@ -7,8 +7,10 @@ import com.ecnu.entity.Session;
 import com.ecnu.entity.User;
 import com.ecnu.exception.*;
 import com.ecnu.mapper.SessionsMapper;
+import com.ecnu.mapper.UserMapper;
 import com.ecnu.service.CounselorService;
 import com.ecnu.service.SessionsService;
+import com.ecnu.vo.ClientSessionExportVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.parameters.P;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +37,8 @@ public class SessionsServiceImpl implements SessionsService {
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
     private SessionsMapper sessionsMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 验证会话访问权限（核心方法）
@@ -124,12 +129,21 @@ public class SessionsServiceImpl implements SessionsService {
     }
 
     @Override
-    public List<Long> getAllSession(Long userId) {
+    public List<ClientSessionExportVO> getAllSession(Long userId) {
         List<Session> sessions = sessionMapper.getByClientId(userId);
-        return sessions.stream()
-                .filter(Objects::nonNull)
-                .map(Session::getSessionId)
-                .collect(Collectors.toList());
+        List<ClientSessionExportVO> result = new ArrayList<>();
+        for (Session session : sessions) {
+            Long counselorId = session.getCounselorId();
+            User counselor = userMapper.getById(counselorId);
+            ClientSessionExportVO vo = ClientSessionExportVO.builder()
+                    .counselorName(counselor.getRealName())
+                    .sessionId(session.getSessionId())
+                    .startTime(session.getStartTime())
+                    .build();
+            result.add(vo);
+        }
+
+        return result;
     }
 
     private boolean isParticipant(Session session, Long userId) {
