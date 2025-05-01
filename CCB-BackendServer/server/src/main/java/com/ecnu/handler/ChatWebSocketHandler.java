@@ -2,6 +2,7 @@ package com.ecnu.handler;
 
 import com.ecnu.constant.MessageTypeConstant;
 import com.ecnu.dto.MessageDTO;
+import com.ecnu.manager.SessionManager;
 import com.ecnu.service.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -24,51 +25,81 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Autowired
     private ChatService chatService;
 
+    @Autowired
+    private SessionManager sessionManager;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+
         String path = Objects.requireNonNull(session.getUri()).getPath();
-
         Pattern chatPathPattern = Pattern.compile("^/chat/(?<senderId>\\d+)$");
-
         Matcher chatPathMatcher = chatPathPattern.matcher(path);
 
         if (chatPathMatcher.matches()) {
             String senderIdStr = chatPathMatcher.group("senderId");
             try {
-                Long senderId = Long.parseLong(senderIdStr);  // 转换为 Long 类型
-                System.out.println("WebSocket 连接已建立: " + senderId + " ," + session.getId());
-                chatService.registerSession(senderId, session);
+                Long senderId = Long.parseLong(senderIdStr);
+                log.info("WebSocket 连接已建立: {} , {}", senderId, session.getId());
+                sessionManager.addUserSession(senderId, session);
             } catch (NumberFormatException e) {
-                System.err.println("非法的 senderId: " + senderIdStr);
-                session.close();  // 关闭连接
+                log.error("非法的 senderId: {}", senderIdStr, e);
+                session.close();
             }
+        } else {
+            log.error("无效的WebSocket连接路径: {}", path);
+            session.close();
         }
     }
 
-
-
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 接收到客户端消息后，解析并处理
-        String payload = message.getPayload();
+        try {
+            String payload = message.getPayload();
+            MessageDTO dto = objectMapper.readValue(payload, MessageDTO.class);
 
-        MessageDTO dto = objectMapper.readValue(payload, MessageDTO.class);
+            Long userId = (Long) session.getAttributes().get("userId");
+            if (userId != null) {
+                sessionManager.updateUserActivity(userId);
 
-        String type = dto.getType();
+                if (dto.getRoomId() != null) {
+                    sessionManager.addUserToRoom(userId, dto.getRoomId());
+                }
+            }
 
-        if (type.equals(MessageTypeConstant.SESSION)) {
-            chatService.sendToSession(dto);
-        } else if (type.equals(MessageTypeConstant.REQUEST)) {
-            chatService.sendToRequest(dto);
+            String type = dto.getType();
+            if (MessageTypeConstant.SESSION.equals(type)) {
+                chatService.sendToSession(dto);
+            } else if (MessageTypeConstant.REQUEST.equals(type)) {
+                chatService.sendToRequest(dto);
+            } else {
+                log.warn("未知的消息类型: {}", type);
+            }
+
+            log.debug("收到消息: {}", payload);
+        } catch (Exception e) {
+            log.error("处理WebSocket消息异常", e);
+            throw e;
         }
-
-
-        System.out.println(payload);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) throws Exception {
-        System.out.println("WebSocket 连接关闭: " + session.getId());
+        try {
+            Long userId = (Long) session.getAttributes().get("userId");
+            if (userId != null) {
+                log.info("WebSocket 连接关闭: 用户 {}, 会话 {}, 状态 {}", userId, session.getId(), status);
+                sessionManager.handleUserDisconnect(userId);
+                sessionManager.removeUserSession(userId);
+            }
+        } catch (Exception e) {
+            log.error("处理WebSocket连接关闭异常", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        log.error("WebSocket传输错误: 会话 {}", session.getId(), exception);
+        super.handleTransportError(session, exception);
     }
 }

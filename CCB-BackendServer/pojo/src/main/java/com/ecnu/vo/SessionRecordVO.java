@@ -20,6 +20,8 @@ public class SessionRecordVO implements Serializable {
 
     private String senderName;
 
+    private String type;
+
     private String content;
 
     private LocalDateTime createdAt;

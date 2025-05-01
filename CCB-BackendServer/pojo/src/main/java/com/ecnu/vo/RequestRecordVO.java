@@ -19,6 +19,8 @@ public class RequestRecordVO {
 
     private String senderName;
 
+    private String type;
+
     private String content;
 
     private LocalDateTime createdAt;
