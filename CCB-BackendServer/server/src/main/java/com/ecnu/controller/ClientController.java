@@ -130,7 +130,7 @@ public class ClientController {
      * @param
      * @return
      */
-    @PostMapping("/session/getAll")
+    @GetMapping("/session/getAll")
     @ApiOperation(value = "获取当前用户所有的会话")
     public Result<List<ClientSessionExportVO>> getAllSessions(
             @RequestParam("userId") Long userId) {
