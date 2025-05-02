@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SupervisorRequestPageVO {
+public class ChatPageVO {
     private CounselorSessionVO sessionData;
     private RequestDetailVO requestData;
 }

@@ -77,4 +77,8 @@ public interface RequestMapper {
     int insert(SupervisionRequest request);
 
     Page<RecentRequest> getHistory(CounselorHistoryDTO counselorHistoryDTO, Long currentId);
+
+
+    @Select("select * from supervision_request where session_id = #{sessionId} and status = 'accepted'")
+    SupervisionRequest getBySessionId(Long sessionId);
 }

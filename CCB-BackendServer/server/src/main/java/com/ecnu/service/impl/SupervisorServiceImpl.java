@@ -176,6 +176,10 @@ public class SupervisorServiceImpl implements SupervisorService {
         return requestDetailVO;
     }
 
+
+
+
+
     @Override
     public CounselorSessionVO getCounselorSession(Long sessionId) {
 
@@ -190,5 +194,32 @@ public class SupervisorServiceImpl implements SupervisorService {
         counselorSessionVO.setHistory(records);
 
         return counselorSessionVO;
+    }
+
+    @Override
+    public RequestDetailVO getRequestBySessionId(Long sessionId) {
+        SupervisionRequest request = requestMapper.getBySessionId(sessionId);
+
+        if ( request == null ) {
+            return null;
+        }
+
+        Long requestId = request.getRequestId();
+
+        Long counselorId = request.getCounselorId();
+
+        User counselor = userMapper.getById(counselorId);
+
+        List<RequestRecordVO> records = requestRecordService.getHistoryMessages(requestId, 0L, 0L);
+
+        LocalDateTime startTime = requestMapper.getById(requestId).getStartTime();
+
+        RequestDetailVO requestDetailVO = RequestDetailVO.builder()
+                .realName(counselor.getRealName())
+                .phoneNumber(counselor.getPhoneNumber())
+                .avatarUrl(counselor.getAvatarUrl())
+                .startTime(startTime)
+                .records(records).build();
+        return requestDetailVO;
     }
 }
