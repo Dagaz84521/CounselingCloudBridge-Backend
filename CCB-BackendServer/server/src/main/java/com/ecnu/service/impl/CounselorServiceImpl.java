@@ -44,6 +44,8 @@ public class CounselorServiceImpl implements CounselorService {
     @Autowired
     private RelationMapper relationMapper;
 
+
+
     /**
      * 获取咨询师信息
      * @return
@@ -236,13 +238,16 @@ public class CounselorServiceImpl implements CounselorService {
     }
 
     @Override
-    public void endRequest(Long requestId) {
+    public LocalDateTime endRequest(Long requestId) {
 
         SupervisionRequest request = requestMapper.getById(requestId);
 
         request.setStatus(RequestStatusConstant.COMPLETED);
 
+        request.setEndTime(LocalDateTime.now());
+
         requestMapper.update(request);
 
+        return request.getEndTime();
     }
 }

@@ -7,6 +7,7 @@ import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.result.Result;
 import com.ecnu.service.CounselorService;
 import com.ecnu.service.SessionRecordService;
+import com.ecnu.service.SupervisorService;
 import com.ecnu.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,6 +31,9 @@ public class CounselorController {
 
     @Autowired
     private SessionRecordService sessionRecordService;
+
+    @Autowired
+    private SupervisorService supervisorService;
 
     /**
      * 咨询师首页
@@ -84,11 +90,23 @@ public class CounselorController {
      */
     @GetMapping("/session/{sessionid}/{clientid}")
     @ApiOperation(value = "咨询师咨询页面")
-    public Result<CounselorSessionVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
-        CounselorSessionVO counselorSessionVO = counselorService.getSession(sessionid, clientid);
-        List<SessionRecordVO> records = sessionRecordService.getHistoryMessages(sessionid, 0L, 0L);
-        counselorSessionVO.setHistory(records);
-        return Result.success(counselorSessionVO);
+    public Result<ChatPageVO> getSession(@PathVariable Long sessionid, @PathVariable Long clientid) {
+        RequestDetailVO requestDetailVO = null;
+        CounselorSessionVO counselorSessionVO = null;
+
+
+        if (sessionid != null) {
+
+            requestDetailVO = supervisorService.getRequestBySessionId(sessionid);
+
+            counselorSessionVO = supervisorService.getCounselorSession(sessionid);
+        }
+
+        ChatPageVO supervisorRequestPageVO = ChatPageVO.builder()
+                .sessionData(counselorSessionVO)
+                .requestData(requestDetailVO)
+                .build();
+        return Result.success(supervisorRequestPageVO);
     }
 
     /**
@@ -159,8 +177,8 @@ public class CounselorController {
      * */
     @PostMapping("/request/end/{requestId}")
     @ApiOperation(value = "咨询师主动结束求助")
-    public Result<Long> endRequest(@PathVariable Long requestId) {
-        counselorService.endRequest(requestId);
-        return Result.success();
+    public Result<LocalDateTime> endRequest(@PathVariable Long requestId) {
+        LocalDateTime endTime = counselorService.endRequest(requestId);
+        return Result.success(endTime);
     }
 }

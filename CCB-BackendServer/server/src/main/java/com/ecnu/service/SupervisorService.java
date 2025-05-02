@@ -28,4 +28,6 @@ public interface SupervisorService {
     RequestDetailVO getRequest(Long requestId);
 
     CounselorSessionVO getCounselorSession(Long sessionId);
+
+    RequestDetailVO getRequestBySessionId(Long requestId);
 }

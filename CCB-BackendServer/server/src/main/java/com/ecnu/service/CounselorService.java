@@ -5,6 +5,7 @@ import com.ecnu.dto.SessionAddAdviceDTO;
 import com.ecnu.entity.Counselor;
 import com.ecnu.vo.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CounselorService {
@@ -98,8 +99,9 @@ public interface CounselorService {
 
     /**
      * 咨询师求助求助
+     *
      * @param requestId
+     * @return
      */
-    void endRequest(Long requestId);
-
+    LocalDateTime endRequest(Long requestId);
 }
