@@ -8,8 +8,11 @@
                 when c.current_sessions = 5 then false
                 else true
             end as is_free
-        from counselors c inner join users u on c.counselor_id = u.user_id
+        from counselors c inner join users u on c.counselor_id = u.user_id right join schedule s on c.counselor_id = s.counselor_id
         <where>
+            <if test="dayOfWeek != null">
+                and s.day_of_week = #{dayOfWeek}
+            </if>
             <if test="name != null">
                 and u.real_name like concat('%', #{name}, '%')
             </if>
