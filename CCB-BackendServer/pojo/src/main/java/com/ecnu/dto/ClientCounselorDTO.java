@@ -22,4 +22,6 @@ public class ClientCounselorDTO implements Serializable {
     private Integer page;
 
     private Integer pagesize;
+
+    private String dayOfWeek;
 }

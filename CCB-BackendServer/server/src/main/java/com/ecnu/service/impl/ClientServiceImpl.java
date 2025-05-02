@@ -18,6 +18,8 @@ import org.apache.commons.lang3.concurrent.BackgroundInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,32 @@ public class ClientServiceImpl implements ClientService {
      * @return
      */
     public List<ClientHomeVO> getHomeInfo() {
-        List<Counselor> counselors = counselorMapper.getTop();
+        DayOfWeek dayOfWeek1 = LocalDateTime.now().getDayOfWeek();
+        String dayOfWeek = null;
+        switch (dayOfWeek1) {
+            case MONDAY:
+                dayOfWeek = "周一";
+                break;
+            case TUESDAY:
+                dayOfWeek = "周二";
+                break;
+            case WEDNESDAY:
+                dayOfWeek = "周三";
+                break;
+            case THURSDAY:
+                dayOfWeek = "周四";
+                break;
+            case FRIDAY:
+                dayOfWeek = "周五";
+                break;
+            case SATURDAY:
+                dayOfWeek = "周六";
+                break;
+            case SUNDAY:
+                dayOfWeek = "周日";
+                break;
+        }
+        List<Counselor> counselors = counselorMapper.getTop(dayOfWeek);
         List<ClientHomeVO> counselorList = new ArrayList<>();
         for (Counselor counselor : counselors) {
             User user = userMapper.getById(counselor.getCounselorId());
@@ -65,6 +92,32 @@ public class ClientServiceImpl implements ClientService {
      */
     public List<ClientHomeVO> getCounselorScheduled(ClientCounselorDTO clientCounselorDTO) {
         PageHelper.startPage(clientCounselorDTO.getPage(), clientCounselorDTO.getPagesize());
+        DayOfWeek dayOfWeek1 = LocalDateTime.now().getDayOfWeek();
+        String dayOfWeek = null;
+        switch (dayOfWeek1) {
+            case MONDAY:
+                dayOfWeek = "周一";
+                break;
+            case TUESDAY:
+                dayOfWeek = "周二";
+                break;
+            case WEDNESDAY:
+                dayOfWeek = "周三";
+                break;
+            case THURSDAY:
+                dayOfWeek = "周四";
+                break;
+            case FRIDAY:
+                dayOfWeek = "周五";
+                break;
+            case SATURDAY:
+                dayOfWeek = "周六";
+                break;
+            case SUNDAY:
+                dayOfWeek = "周日";
+                break;
+        }
+        clientCounselorDTO.setDayOfWeek(dayOfWeek);
         Page<ClientHomeVO> page = counselorMapper.getCounselorScheduled(clientCounselorDTO);
         return page.getResult();
     }
