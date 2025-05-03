@@ -71,11 +71,18 @@ public class ClientController {
 
     @GetMapping("/session/history")
     @ApiOperation(value = "客户咨询页面")
-    public Result<List<SessionRecordVO>> getSession(@RequestParam("sessionId") Long sessionId) {
+    public Result<ClientSessionRecordVO> getSession(@RequestParam("sessionId") Long sessionId) {
+
+        String advice = sessionsService.getAdvice(sessionId);
 
         List<SessionRecordVO> record = sessionRecordService.getHistoryMessages(sessionId, 0L, 0L);
 
-        return Result.success(record);
+        ClientSessionRecordVO clientSessionRecordVO = ClientSessionRecordVO.builder()
+                .advice(advice)
+                .records(record)
+                .build();
+
+        return Result.success(clientSessionRecordVO);
     }
 
 
