@@ -146,6 +146,14 @@ public class SessionsServiceImpl implements SessionsService {
         return result;
     }
 
+    @Override
+    public String getAdvice(Long sessionId){
+
+        Session session = sessionMapper.getById(sessionId);
+
+        return session.getAdvice();
+    }
+
     private boolean isParticipant(Session session, Long userId) {
         return userId.equals(session.getClientId()) || userId.equals(session.getCounselorId());
     }

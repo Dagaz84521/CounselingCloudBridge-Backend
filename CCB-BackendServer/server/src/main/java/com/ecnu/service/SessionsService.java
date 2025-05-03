@@ -26,4 +26,6 @@ public interface SessionsService {
     List<Long> getRelatedSession(Long userId);
 
     List<ClientSessionExportVO> getAllSession(Long userId);
+
+    String getAdvice(Long sessionId);
 }
