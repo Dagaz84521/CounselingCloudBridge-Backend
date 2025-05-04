@@ -39,8 +39,8 @@ public interface CounselorMapper {
      * 获取评分最高的两个咨询师
      * @return
      */
-    @Select("SELECT * FROM counselors ORDER BY rating DESC LIMIT 2")
-    List<Counselor> getTop();
+    @Select("SELECT * FROM counselors c right join schedule s on c.counselor_id = s.counselor_id where s.day_of_week = #{dayOfWeek} ORDER BY rating DESC LIMIT 2")
+    List<Counselor> getTop(String dayOfWeek);
 
     /**
      * 获取咨询师排班信息
