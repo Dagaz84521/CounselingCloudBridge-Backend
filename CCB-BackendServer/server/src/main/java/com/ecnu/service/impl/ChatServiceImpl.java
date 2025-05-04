@@ -1,9 +1,12 @@
 package com.ecnu.service.impl;
 
+import com.ecnu.constant.RequestStatusConstant;
 import com.ecnu.dto.MessageDTO;
 import com.ecnu.entity.RequestRecord;
 import com.ecnu.entity.SessionRecord;
+import com.ecnu.entity.SupervisionRequest;
 import com.ecnu.manager.SessionManager;
+import com.ecnu.mapper.RequestMapper;
 import com.ecnu.mapper.RequestRecordMapper;
 import com.ecnu.mapper.SessionRecordMapper;
 import com.ecnu.service.ChatService;
@@ -34,6 +37,9 @@ public class ChatServiceImpl implements ChatService {
     private RequestRecordMapper requestRecordMapper;
 
     @Autowired
+    private RequestMapper requestMapper;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @Override
@@ -54,8 +60,15 @@ public class ChatServiceImpl implements ChatService {
             sessionRecordVO.setType(dto.getType());
             Long receiverId = dto.getReceiverId();
             String message = objectMapper.writeValueAsString(sessionRecordVO);
-
             this.sendToReceiver(receiverId, message);
+
+            SupervisionRequest request = requestMapper.getBySessionId(sessionRecord.getSessionId());
+
+            if (request != null && !request.getStatus().equals(RequestStatusConstant.COMPLETED)) {
+                this.sendToReceiver(request.getSupervisorId(), message);
+            }
+
+
         } catch (Exception e) {
             log.error("发送会话消息异常", e);
             throw new RuntimeException("发送会话消息失败", e);

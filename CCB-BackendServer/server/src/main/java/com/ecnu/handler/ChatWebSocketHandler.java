@@ -54,7 +54,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         try {
             MessageDTO dto = objectMapper.readValue(message.getPayload(), MessageDTO.class);
             Long roomId = dto.getRoomId();
+            Long userId = dto.getSenderId();
 
+            if (userId != null) {
+                sessionManager.updateUserActivity(userId);
+            }
             // 更新房间活跃时间
             if (roomId != null) {
                 sessionManager.updateRoomActivity(roomId);
