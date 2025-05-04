@@ -1,3 +1,4 @@
+// ChatWebSocketHandler.java
 package com.ecnu.handler;
 
 import com.ecnu.constant.MessageTypeConstant;
@@ -12,6 +13,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,33 +22,29 @@ import java.util.regex.Pattern;
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Autowired
-    private ChatService chatService;
-
     @Autowired
     private SessionManager sessionManager;
+    @Autowired
+    private ChatService chatService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-
+    public void afterConnectionEstablished(WebSocketSession session) throws IOException {
         String path = Objects.requireNonNull(session.getUri()).getPath();
-        Pattern chatPathPattern = Pattern.compile("^/chat/(?<senderId>\\d+)$");
-        Matcher chatPathMatcher = chatPathPattern.matcher(path);
+        Matcher matcher = Pattern.compile("^/chat/(?<userId>\\d+)$").matcher(path);
 
-        if (chatPathMatcher.matches()) {
-            String senderIdStr = chatPathMatcher.group("senderId");
+        if (matcher.matches()) {
             try {
-                Long senderId = Long.parseLong(senderIdStr);
-                log.info("WebSocket 连接已建立: {} , {}", senderId, session.getId());
-                sessionManager.addUserSession(senderId, session);
+                Long userId = Long.parseLong(matcher.group("userId"));
+                sessionManager.addUserSession(userId, session);
+                log.info("用户 {} 连接建立", userId);
             } catch (NumberFormatException e) {
-                log.error("非法的 senderId: {}", senderIdStr, e);
+                log.error("非法用户ID格式", e);
                 session.close();
             }
         } else {
-            log.error("无效的WebSocket连接路径: {}", path);
+            log.error("非法连接路径: {}", path);
             session.close();
         }
     }
@@ -54,52 +52,43 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
-            String payload = message.getPayload();
-            MessageDTO dto = objectMapper.readValue(payload, MessageDTO.class);
+            MessageDTO dto = objectMapper.readValue(message.getPayload(), MessageDTO.class);
+            Long roomId = dto.getRoomId();
 
-            Long userId = (Long) session.getAttributes().get("userId");
-            if (userId != null) {
-                sessionManager.updateUserActivity(userId);
-
-                if (dto.getRoomId() != null) {
-                    sessionManager.addUserToRoom(userId, dto.getRoomId());
-                }
+            // 更新房间活跃时间
+            if (roomId != null) {
+                sessionManager.updateRoomActivity(roomId);
+                sessionManager.addUserToRoom(dto.getSenderId(), roomId, dto.getType());
             }
 
-            String type = dto.getType();
-            if (MessageTypeConstant.SESSION.equals(type)) {
-                chatService.sendToSession(dto);
-            } else if (MessageTypeConstant.REQUEST.equals(type)) {
-                chatService.sendToRequest(dto);
-            } else {
-                log.warn("未知的消息类型: {}", type);
+            // 消息路由
+            switch (Objects.requireNonNull(dto.getType())) {
+                case MessageTypeConstant.SESSION:
+                    chatService.sendToSession(dto);
+                    break;
+                case MessageTypeConstant.REQUEST:
+                    chatService.sendToRequest(dto);
+                    break;
+                case MessageTypeConstant.ROOM_ESTABLISHED:
+                    break;
+                default:
+                    log.warn("未知消息类型: {}", dto.getType());
             }
-
-            log.debug("收到消息: {}", payload);
         } catch (Exception e) {
-            log.error("处理WebSocket消息异常", e);
+            log.error("消息处理异常", e);
             throw e;
         }
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) throws Exception {
-        try {
-            Long userId = (Long) session.getAttributes().get("userId");
-            if (userId != null) {
-                log.info("WebSocket 连接关闭: 用户 {}, 会话 {}, 状态 {}", userId, session.getId(), status);
-                sessionManager.handleUserDisconnect(userId);
-                sessionManager.removeUserSession(userId);
-            }
-        } catch (Exception e) {
-            log.error("处理WebSocket连接关闭异常", e);
-            throw e;
-        }
+    public void handleTransportError(WebSocketSession session, Throwable exception) {
+        log.error("传输错误", exception);
+        sessionManager.removeSession(session);
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        log.error("WebSocket传输错误: 会话 {}", session.getId(), exception);
-        super.handleTransportError(session, exception);
+    public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) {
+        sessionManager.removeSession(session);
+        log.info("连接关闭，状态码: {}", status);
     }
 }

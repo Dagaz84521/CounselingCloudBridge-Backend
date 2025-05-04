@@ -1,5 +1,9 @@
+// SessionManager.java
 package com.ecnu.manager;
 
+import com.ecnu.constant.MessageTypeConstant;
+import com.ecnu.service.CounselorService;
+import com.ecnu.service.SessionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
@@ -19,35 +23,32 @@ import java.util.concurrent.ScheduledFuture;
 @Component
 public class SessionManager {
 
-    // 用户ID到WebSocket会话的映射
+    // 用户会话管理
     private final Map<Long, WebSocketSession> userSessions = new ConcurrentHashMap<>();
+    private final Map<Long, Instant> userActivities = new ConcurrentHashMap<>(); // 新增用户活动时间
 
-    // 用户最后活动时间记录
-    private final Map<Long, Instant> lastActivityTimes = new ConcurrentHashMap<>();
-
-    // 房间ID到用户ID集合的映射
+    // 房间关系管理
+    private final Map<Long, Instant> roomActivities = new ConcurrentHashMap<>();
     private final Map<Long, Set<Long>> roomUsers = new ConcurrentHashMap<>();
-
-    // 用户ID到所在房间ID集合的映射
     private final Map<Long, Set<Long>> userRooms = new ConcurrentHashMap<>();
+    private final Map<Long, String> roomTypes = new ConcurrentHashMap<>();
 
-    // 会话装饰配置参数
-    private static final int SEND_TIME_LIMIT = 1000;
-    private static final int BUFFER_SIZE_LIMIT = 1024 * 1024;
+    // 超时配置（30分钟）
+    private static final long ROOM_TIMEOUT_SECONDS = 10;
+    private static final long CHECK_INTERVAL = 5 * 1000;
 
     @Resource
     private TaskScheduler taskScheduler;
-    private ScheduledFuture<?> timeoutTask;
+    @Resource
+    private SessionsService sessionsService;
+    @Resource
+    private CounselorService counselorService;
 
-    private static final long TIMEOUT_SECONDS = 60 * 30; // 多久为发送消息后会断开连接
-    private static final long CHECK_INTERVAL = 5 * 1000; // 新增检查间隔（5秒）
+    private ScheduledFuture<?> timeoutTask;
 
     @PostConstruct
     public void init() {
-        timeoutTask = taskScheduler.scheduleAtFixedRate(
-                this::checkTimeoutConnections,
-                CHECK_INTERVAL // 使用5秒间隔
-        );
+        timeoutTask = taskScheduler.scheduleAtFixedRate(this::checkRoomTimeouts, CHECK_INTERVAL);
     }
 
     @PreDestroy
@@ -57,110 +58,132 @@ public class SessionManager {
         }
     }
 
-    private void checkTimeoutConnections() {
+    private void checkRoomTimeouts() {
         Instant now = Instant.now();
-        lastActivityTimes.forEach((userId, lastActive) -> {
-            if (lastActive.plusSeconds(TIMEOUT_SECONDS).isBefore(now)) {
-                log.info("用户{}连接超时，即将关闭", userId);
-                removeUserSession(userId);
+        List<Long> expiredRooms = new ArrayList<>();
+
+        // 检测超时房间
+        roomActivities.forEach((roomId, lastActive) -> {
+            if (lastActive.plusSeconds(ROOM_TIMEOUT_SECONDS).isBefore(now)) {
+                expiredRooms.add(roomId);
             }
+        });
+
+        // 处理超时房间
+        expiredRooms.forEach(roomId -> {
+            log.info("房间 {} 因超时即将关闭", roomId);
+
+            // 获取房间用户快照
+            Set<Long> userIds = roomUsers.getOrDefault(roomId, Collections.emptySet());
+            new ArrayList<>(userIds).forEach(userId -> {
+                removeUserFromRoom(userId, roomId);
+                checkUserConnection(userId);
+            });
+
+            // 更新数据库状态
+            updateRoomStatus(roomId);
+            cleanupRoom(roomId);
         });
     }
 
-    public void updateUserActivity(Long userId) {
-        lastActivityTimes.put(userId, Instant.now());
+    private void checkUserConnection(Long userId) {
+        if (!userRooms.containsKey(userId)) {
+            WebSocketSession session = userSessions.remove(userId);
+            if (session != null && session.isOpen()) {
+                try {
+                    session.close();
+                    log.info("用户 {} 已断开连接", userId);
+                } catch (IOException e) {
+                    log.error("关闭连接失败", e);
+                }
+            }
+        }
     }
 
+    public void updateRoomActivity(Long roomId) {
+        roomActivities.put(roomId, Instant.now());
+    }
     public void addUserSession(Long userId, WebSocketSession rawSession) {
         WebSocketSession session = new ConcurrentWebSocketSessionDecorator(
-                rawSession, SEND_TIME_LIMIT, BUFFER_SIZE_LIMIT
+                rawSession, 100, 1024 * 1024
         );
-
-        session.getAttributes().put("userId", userId);
 
         Optional.ofNullable(userSessions.put(userId, session))
                 .ifPresent(oldSession -> {
                     try {
-                        if (oldSession.isOpen()) {
-                            oldSession.close();
-                            log.info("关闭用户{}的旧连接", userId);
-                        }
+                        if (oldSession.isOpen()) oldSession.close();
                     } catch (IOException e) {
-                        log.error("关闭用户{}旧连接异常", userId, e);
+                        log.error("关闭旧连接异常", e);
                     }
                 });
-
-        updateUserActivity(userId);
     }
 
-    public void addUserToRoom(Long userId, Long roomId) {
+    public void addUserToRoom(Long userId, Long roomId, String type) {
         roomUsers.computeIfAbsent(roomId, k -> ConcurrentHashMap.newKeySet()).add(userId);
         userRooms.computeIfAbsent(userId, k -> ConcurrentHashMap.newKeySet()).add(roomId);
+        roomTypes.putIfAbsent(roomId, type);
+        updateRoomActivity(roomId);
     }
 
-    public void removeUserFromRoom(Long userId, Long roomId) {
-        Optional.ofNullable(roomUsers.get(roomId)).ifPresent(users -> users.remove(userId));
-        Optional.ofNullable(userRooms.get(userId)).ifPresent(rooms -> rooms.remove(roomId));
-
-        if (roomUsers.containsKey(roomId) && roomUsers.get(roomId).isEmpty()) {
-            roomUsers.remove(roomId);
-        }
-
-        if (userRooms.containsKey(userId) && userRooms.get(userId).isEmpty()) {
-            userRooms.remove(userId);
-        }
-    }
-
-    public void handleUserDisconnect(Long userId) {
-        Set<Long> rooms = userRooms.getOrDefault(userId, Collections.emptySet());
-
-        rooms.forEach(roomId -> removeUserFromRoom(userId, roomId));
-
-        rooms.forEach(roomId -> {
-            Set<Long> usersInRoom = roomUsers.get(roomId);
-            if (usersInRoom != null) {
-                usersInRoom.forEach(otherUserId -> {
-                    if (userRooms.getOrDefault(otherUserId, Collections.emptySet()).size() <= 1) {
-                        removeUserSession(otherUserId);
-                    }
-                });
-            }
+    private void removeUserFromRoom(Long userId, Long roomId) {
+        Optional.ofNullable(roomUsers.get(roomId)).ifPresent(users -> {
+            users.remove(userId);
+            if (users.isEmpty()) roomUsers.remove(roomId);
         });
+
+        Optional.ofNullable(userRooms.get(userId)).ifPresent(rooms -> {
+            rooms.remove(roomId);
+            if (rooms.isEmpty()) userRooms.remove(userId);
+        });
+    }
+
+    private void updateRoomStatus(Long roomId) {
+        String type = roomTypes.get(roomId);
+        if (type == null) {
+            log.warn("尝试更新未知房间的状态: {}", roomId);
+            return;
+        }
+        try {
+            switch (type) {
+                case MessageTypeConstant.SESSION:
+                    sessionsService.endSession(roomId, 5);
+                    break;
+                case MessageTypeConstant.REQUEST:
+                    counselorService.endRequest(roomId);
+                    break;
+                default:
+                    log.error("检测到非法房间类型: {} [roomId={}]", type, roomId);
+            }
+            log.info("房间状态已持久化 | type={} roomId={}", type, roomId);
+        } catch (Exception e) {
+            log.error("房间状态更新失败 | roomId={} error={}", roomId, e.getMessage());
+            // 重试逻辑（可根据需要实现）
+        }
+    }
+
+    private void cleanupRoom(Long roomId) {
+        synchronized (this) {
+            roomActivities.remove(roomId);
+            roomUsers.remove(roomId);
+            roomTypes.remove(roomId);
+
+            // 同时清理反向索引中的空用户条目
+            roomUsers.values().removeIf(Set::isEmpty);
+            userRooms.values().removeIf(Set::isEmpty);
+        }
+        log.info("房间 {} 已完全清理", roomId);
     }
 
     public WebSocketSession getUserSession(Long userId) {
         return userSessions.get(userId);
     }
 
-    public void removeUserSession(Long userId) {
-        Optional.ofNullable(userSessions.remove(userId))
-                .ifPresent(session -> {
-                    try {
-                        if (session.isOpen()) {
-                            session.close();
-                        }
-                    } catch (IOException e) {
-                        log.error("关闭用户{}会话异常", userId, e);
-                    }
-                });
-
-        handleUserDisconnect(userId);
-        lastActivityTimes.remove(userId);
-    }
-
-    public void removeSession(WebSocketSession targetSession) {
-        Optional.ofNullable(targetSession.getAttributes().get("userId"))
-                .map(userId -> (Long) userId)
-                .ifPresent(userId -> {
-                    if (userSessions.get(userId) == targetSession) {
-                        removeUserSession(userId);
-                    }
-                });
-    }
-
-    public int getActiveConnections() {
-        return (int) userSessions.values().stream()
-                .filter(WebSocketSession::isOpen)
-                .count();
+    public void removeSession(WebSocketSession session) {
+        userSessions.forEach((id, sess) -> {
+            if (sess == session) {
+                userSessions.remove(id, sess);
+                log.warn("Removed orphan session for user: {}", id);
+            }
+        });
     }
 }

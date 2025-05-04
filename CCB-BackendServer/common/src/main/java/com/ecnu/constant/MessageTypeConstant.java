@@ -5,4 +5,5 @@ package com.ecnu.constant;
 public class MessageTypeConstant {
     public static final String SESSION = "session";
     public static final String REQUEST = "request";
+    public static final String ROOM_ESTABLISHED = "room_established";
 }
